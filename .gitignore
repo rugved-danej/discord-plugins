@@ -1,0 +1,36 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# dotenv environment variables file
+.env
+.env.test
+.env.production
+
+# Mac OS
+.DS_Store
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build output
+# (Note: If you plan to host the Vendetta plugin directly from your main branch, 
+# you should NOT ignore the dist/ folder so users can install it via raw github link.
+# However, if you use a Github Action to build to a separate branch, leave it ignored).
+# dist/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
