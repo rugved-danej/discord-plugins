@@ -16,7 +16,7 @@
     box-sizing: border-box;
 }
 
-body {
+html, body {
     background-color: var(--bg-dark);
     color: var(--text-main);
     font-family: 'Inter', sans-serif;
@@ -24,6 +24,8 @@ body {
     overflow-x: hidden;
     position: relative;
     width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 h1, h2, h3, .logo-text {
