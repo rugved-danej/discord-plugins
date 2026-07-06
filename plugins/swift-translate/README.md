@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="../../docs/assets/banner.jpg" alt="Swift Translate Banner" width="800" />
+  <img src="../../assets/banner.jpg" alt="Swift Translate Banner" width="800" />
 
   # 🌐 Swift Translate v1.0.0
 
@@ -25,7 +25,7 @@ Swift Translate splits your language settings into two separate targets:
 Why lose the original context? With Immersive Mode turned on, translated messages are stacked seamlessly underneath the original text. You get to learn the language while reading the translation!
 
 <div align="center">
-  <img src="../../docs/assets/immersive.jpg" alt="Immersive Mode" width="600" />
+  <img src="../../assets/immersive.jpg" alt="Immersive Mode" width="600" />
 </div>
 
 ### 3. Smart Channel Routing
