@@ -403,14 +403,77 @@ footer {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .hero h1 {
-        font-size: 3rem;
+        font-size: 3.5rem;
     }
-    .hero p {
-        font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        padding: 15px 5%;
+        gap: 15px;
     }
     .nav-links {
-        display: none;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+    .hero {
+        min-height: 60vh;
+        padding-top: 40px;
+    }
+    .hero h1 {
+        font-size: 2.8rem;
+    }
+    .hero p {
+        font-size: 1.05rem;
+    }
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .plugins-section {
+        padding: 60px 5%;
+    }
+    .section-header h2 {
+        font-size: 2rem;
+    }
+    .plugin-grid {
+        grid-template-columns: 1fr;
+    }
+    .installation-section {
+        padding: 40px 5% 80px;
+    }
+    .install-guide {
+        padding: 24px;
+    }
+    .install-guide h2 {
+        font-size: 1.6rem;
+    }
+    .step {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+    .install-link-box {
+        flex-direction: column;
+    }
+    .copy-btn {
+        padding: 12px;
     }
 }
