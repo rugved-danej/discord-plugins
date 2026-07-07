@@ -15,8 +15,7 @@ The most advanced translation plugin ever created for mobile Discord.
 - Smart Channel Rules to auto-route languages per channel.
 
 **How to Install:**
-Install it directly via Vendetta/Bunny plugin fetcher using the raw URL of the compiled plugin, or build it locally using `npm run build`!
-
----
-
-*Made with ❤️ by Rugved.*
+Copy the exact link below and paste it directly into Vendetta or Bunny's plugin fetcher:
+```text
+https://raw.githubusercontent.com/rugved-danej/discord-plugins/main/plugins/next-translator/
+```

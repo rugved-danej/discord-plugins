@@ -22,5 +22,10 @@ Next Translator comes fully equipped with a background Auto-Sync engine. By defa
 
 *(Developers: Want to host your own sync server? The code is provided in the `next-translator-backend` folder! Just deploy to Vercel with a MongoDB URL!)*
 
-## 🛠️ Built By
-Rugved (@rugved) - Pushing the limits of mobile Discord plugins.
+## 📥 Installation
+
+Copy the exact link below and paste it into Vendetta or Bunny's plugin fetcher:
+
+```text
+https://raw.githubusercontent.com/rugved-danej/discord-plugins/main/plugins/next-translator/
+```
