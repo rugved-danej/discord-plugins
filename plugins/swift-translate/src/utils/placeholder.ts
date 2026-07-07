@@ -11,7 +11,7 @@ export function maskText(text: string): { textToTranslate: string, placeholders:
     
     const textToTranslate = text.replace(combinedRegex, (match) => {
         placeholders.push(match);
-        return ` [[${placeholders.length - 1}]] `;
+        return ` __PH${placeholders.length - 1}__ `;
     });
     
     return { textToTranslate, placeholders };
@@ -20,7 +20,7 @@ export function maskText(text: string): { textToTranslate: string, placeholders:
 export function unmaskText(translatedText: string, placeholders: string[]): string {
     let result = translatedText;
     placeholders.forEach((original, index) => {
-        const pRegex = new RegExp(`\\[\\[\\s*${index}\\s*\\]\\]`, 'g');
+        const pRegex = new RegExp(`__PH${index}__`, 'g');
         result = result.replace(pRegex, original);
     });
     return result.trim();

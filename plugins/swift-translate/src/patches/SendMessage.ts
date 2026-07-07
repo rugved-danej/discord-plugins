@@ -22,7 +22,12 @@ const processMessage = async (channelId: string, msg: any) => {
             let translate;
             switch(Number(settings.translator)) {
                 case 0:
-                    translate = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
+                    try {
+                        translate = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
+                    } catch (deeplErr) {
+                        console.warn("Swift Translate: DeepL failed, silently falling back to Google Translate...", deeplErr);
+                        translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
+                    }
                     break;
                 case 1:
                 default:

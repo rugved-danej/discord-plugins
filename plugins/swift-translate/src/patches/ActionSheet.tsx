@@ -88,7 +88,12 @@ export default () => {
                             switch(Number(settings.translator)) {
                                 case 0:
                                     console.log("Translating with DeepL: ", textToTranslate)
-                                    translate = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, !isTranslated)
+                                    try {
+                                        translate = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, !isTranslated)
+                                    } catch (deeplErr) {
+                                        console.warn("Swift Translate: DeepL failed, silently falling back to Google Translate...", deeplErr);
+                                        translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, !isTranslated)
+                                    }
                                     break
                                 case 1:
                                 default:

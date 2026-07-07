@@ -2,7 +2,8 @@ import { before, after } from "@vendetta/patcher"
 import { FluxDispatcher } from "@vendetta/metro/common"
 import { DeepL, GoogleTranslate } from "./"
 import { settings } from ".."
-
+import { maskText, unmaskText } from "../utils/placeholder"
+import { getLanguageName } from "../lang"
 
 let activeChannels = new Set<string>();
 
@@ -31,34 +32,54 @@ export default () => {
             const message = event.message;
             if (!message || !message.channel_id || !message.content || message.content === "") return;
 
-
             if (!activeChannels.has(message.channel_id)) return;
-
 
             if (translatedMessageIds.has(message.id)) return;
 
             const originalContent = message.content;
 
-
             (async () => {
                 try {
-                    let res;
-                    if (settings.translator === 0) {
-                        res = await DeepL.translate(originalContent, settings.source_lang === "auto" ? undefined : settings.source_lang, settings.target_lang || "en");
-                    } else {
-                        res = await GoogleTranslate.translate(originalContent, settings.source_lang === "auto" ? undefined : settings.source_lang, settings.target_lang || "en");
+                    const target_lang = settings.target_lang_incoming || "en";
+                    const isImmersive = settings.immersive_enabled;
+                    const { textToTranslate, placeholders } = maskText(originalContent);
+                    let translate;
+                    
+                    switch(Number(settings.translator)) {
+                        case 0:
+                            try {
+                                translate = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
+                            } catch (deeplErr) {
+                                console.warn("Swift Translate: Auto Incoming DeepL failed, falling back to Google Translate...");
+                                translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
+                            }
+                            break;
+                        case 1:
+                        default:
+                            translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
+                            break;
                     }
 
-                    if (res && res.text && res.text !== originalContent) {
+                    if (translate && translate.text && translate.text !== originalContent) {
                         translatedMessageIds.add(message.id);
                         
+                        const translatedText = unmaskText(translate.text, placeholders);
+                        const sourceName = getLanguageName(translate.source_lang, settings.translator);
+                        const targetName = getLanguageName(target_lang, settings.translator);
+                        const detectedLang = translate.source_lang ? `[${sourceName} ➔ ${targetName}]` : `[${targetName}]`;
+                        
+                        const finalContent = isImmersive 
+                            ? `${originalContent}\n${translatedText.trim()}\n\`${detectedLang}\``
+                            : `${translatedText.trim()}\n\`${detectedLang}\``;
 
                         FluxDispatcher.dispatch({
                             type: "MESSAGE_UPDATE",
                             message: {
                                 ...message,
-                                content: `${res.text}\n\`[${res.source_lang} ➔ ${res.target_lang}]\``
-                            }
+                                content: finalContent
+                            },
+                            log_edit: false,
+                            otherPluginBypass: true
                         });
                     }
                 } catch (e) {
