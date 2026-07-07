@@ -10,6 +10,7 @@ import { ApplicationCommandInputType, ApplicationCommandType } from "@vendetta/c
 import { ButtonColors } from "@vendetta/ui/components"
 import { maskText, unmaskText } from "../utils/placeholder"
 import { getChannelTargetLanguage } from "../utils/ChannelLanguageStore"
+import { DeepLLangs, GoogleTranslateLangs } from "../lang"
 
 let unregisterTranslate: () => void;
 let unregisterTrBio: () => void;
