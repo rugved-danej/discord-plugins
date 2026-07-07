@@ -28,7 +28,7 @@ try {
     settings.custom_dictionary ??= []
     settings.deepl_api_key ??= ""
 } catch (e) {
-    console.error("Swift Translate: Failed to initialize storage defaults.", e);
+    console.error("Next Translator: Failed to initialize storage defaults.", e);
 }
 
 let patches = []

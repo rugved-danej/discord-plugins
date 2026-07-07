@@ -50,7 +50,7 @@ export default () => {
                             try {
                                 translate = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
                             } catch (deeplErr) {
-                                console.warn("Swift Translate: Auto Incoming DeepL failed, falling back to Google Translate...");
+                                console.warn("Next Translator: Auto Incoming DeepL failed, falling back to Google Translate...");
                                 translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
                             }
                             break;
@@ -83,7 +83,7 @@ export default () => {
                         });
                     }
                 } catch (e) {
-                    console.error("Swift Translate AutoTranslate Error:", e);
+                    console.error("Next Translator AutoTranslate Error:", e);
                 }
             })();
         });
@@ -94,7 +94,7 @@ export default () => {
             translatedMessageIds.clear();
         }
     } catch (e) {
-        console.error("Swift Translate: Failed to initialize AutoTranslate", e);
+        console.error("Next Translator: Failed to initialize AutoTranslate", e);
         return () => {};
     }
 }

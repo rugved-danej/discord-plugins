@@ -25,7 +25,7 @@ const processMessage = async (channelId: string, msg: any) => {
             UserStore ??= findByStoreName("UserStore");
             const user = UserStore?.getCurrentUser?.();
             if (user) {
-                fakeId = "swift-translate-" + Date.now();
+                fakeId = "next-translator-" + Date.now();
                 FluxDispatcher.dispatch({
                     type: "MESSAGE_CREATE",
                     message: {
@@ -39,7 +39,7 @@ const processMessage = async (channelId: string, msg: any) => {
                 });
             }
         } catch (e) {
-            console.warn("Swift Translate: Failed to dispatch ghost message", e);
+            console.warn("Next Translator: Failed to dispatch ghost message", e);
         }
 
         try {
@@ -51,7 +51,7 @@ const processMessage = async (channelId: string, msg: any) => {
                     try {
                         translate = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
                     } catch (deeplErr) {
-                        console.warn("Swift Translate: DeepL failed, silently falling back to Google Translate...", deeplErr);
+                        console.warn("Next Translator: DeepL failed, silently falling back to Google Translate...", deeplErr);
                         translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
                     }
                     break;
@@ -66,8 +66,8 @@ const processMessage = async (channelId: string, msg: any) => {
                 msg.__swift_translate_translated = true;
             }
         } catch (e) {
-            console.error("Swift Translate: Failed to auto-translate outgoing message.", e);
-            showToast("Swift Translate: Engine failed to convert outgoing text.", undefined);
+            console.error("Next Translator: Failed to auto-translate outgoing message.", e);
+            showToast("Next Translator: Engine failed to convert outgoing text.", undefined);
         } finally {
             if (fakeId) {
                 FluxDispatcher.dispatch({
@@ -100,7 +100,7 @@ export default () => {
             unpatchEdit();
         };
     } catch (e) {
-        console.error("Swift Translate: Failed to patch outgoing messages.", e);
+        console.error("Next Translator: Failed to patch outgoing messages.", e);
         return () => {};
     }
 }

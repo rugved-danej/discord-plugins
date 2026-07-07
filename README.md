@@ -4,8 +4,13 @@ Welcome to my personal Discord plugins workspace for Discord modded clients!
 
 ## 🚀 Available Plugins
 
-### 🌐 [Swift Translate](./plugins/swift-translate/README.md) (v1.0.0)
-The most powerful, seamless, and intelligent two-way translation engine for Discord. Intercepts outgoing messages, translates incoming messages with dual-text immersive mode, and completely protects your emojis, pings, and code blocks using a robust regex engine. 
+### 🌐 [Next Translator](./plugins/swift-translate/README.md) (v1.0.0)
+The most powerful, seamless, and intelligent two-way translation engine for Discord. Features include:
+- **Optimistic UI Ghost Messages:** Get instant "Translating... ⏳" visual feedback in your chat while you wait for the API!
+- **Silent Engine Fallback:** Automatically switches between DeepL and Google Translate if an API fails, ensuring 100% uptime.
+- **Live Incoming Auto-Translate:** Instantly auto-translates all messages in a specific channel as they arrive.
+- **Robust Placeholder Engine:** Uses advanced alphanumeric masking (`__PH0__`) to protect URLs, Mentions, Emojis, and Code Blocks from translation corruption.
+- **Immersive Dual-Text Mode:** View both the original and translated text stacked seamlessly.
 
 ---
 

@@ -56,7 +56,7 @@ export default () => {
                     const message = currentMessage;
                     const buttons = findInReactTree(component, x => x?.[0]?.type?.name === "ActionSheetRow")
                     if (!buttons) return
-                    const hasTranslateButton = buttons.some((x: any) => x?.key === "swift-translate-button")
+                    const hasTranslateButton = buttons.some((x: any) => x?.key === "next-translator-button")
                     if (hasTranslateButton) return;
                     const position = Math.max(buttons.findIndex((x: any) => x.props.message === i18n.Messages.MARK_UNREAD), 0)
 
@@ -91,7 +91,7 @@ export default () => {
                                     try {
                                         translate = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, !isTranslated)
                                     } catch (deeplErr) {
-                                        console.warn("Swift Translate: DeepL failed, silently falling back to Google Translate...", deeplErr);
+                                        console.warn("Next Translator: DeepL failed, silently falling back to Google Translate...", deeplErr);
                                         translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, !isTranslated)
                                     }
                                     break
@@ -159,7 +159,7 @@ export default () => {
 
                     buttons.splice(position, 0, (
                         <ActionSheetRow
-                            key="swift-translate-button"
+                            key="next-translator-button"
                             label={`${translateType} Message`}
                             icon={
                                 <ActionSheetRow.Icon
@@ -179,7 +179,7 @@ export default () => {
                     if (hasCachedData) {
                         buttons.splice(position + 1, 0, (
                             <ActionSheetRow
-                                key="swift-translate-copy-button"
+                                key="next-translator-copy-button"
                                 label="Copy Translated Text"
                                 icon={
                                     <ActionSheetRow.Icon
@@ -218,7 +218,7 @@ export default () => {
             if (moduleUnpatch) moduleUnpatch();
         }
     } catch (e) {
-        console.error("Swift Translate: Failed to patch ActionSheet.", e);
+        console.error("Next Translator: Failed to patch ActionSheet.", e);
         return () => {};
     }
 }

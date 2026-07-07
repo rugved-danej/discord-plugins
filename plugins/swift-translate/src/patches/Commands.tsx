@@ -25,8 +25,8 @@ export default () => {
         unregisterTranslate = registerCommand({
             name: "translate",
             displayName: "translate",
-            description: "[Swift Translate] Instantly convert any text into your preferred language",
-            displayDescription: "[Swift Translate] Instantly convert any text into your preferred language",
+            description: "[Next Translator] Instantly convert any text into your preferred language",
+            displayDescription: "[Next Translator] Instantly convert any text into your preferred language",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -70,9 +70,9 @@ export default () => {
                         content: finalContent
                     };
                 } catch (e) {
-                    console.error("Swift Translate Translation Error", e);
+                    console.error("Next Translator Translation Error", e);
                     return {
-                        content: "Swift Translate encountered an error while processing your request."
+                        content: "Next Translator encountered an error while processing your request."
                     }
                 }
             }
@@ -81,8 +81,8 @@ export default () => {
         unregisterTrBio = registerCommand({
             name: "tr-bio",
             displayName: "tr-bio",
-            description: "[Swift Translate] Fetch and convert a user's About Me section",
-            displayDescription: "[Swift Translate] Fetch and convert a user's About Me section",
+            description: "[Next Translator] Fetch and convert a user's About Me section",
+            displayDescription: "[Next Translator] Fetch and convert a user's About Me section",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -115,13 +115,13 @@ export default () => {
                     }
 
                     showConfirmationAlert({
-                        title: "Swift Translate Results",
+                        title: "Next Translator Results",
                         content: `${res.text}\n\`[${res.source_lang} ➔ ${res.target_lang}]\``,
                         confirmText: "Close",
                         confirmColor: "brand" as ButtonColors
                     });
                 } catch (e) {
-                    console.error("Swift Translate Bio Error", e);
+                    console.error("Next Translator Bio Error", e);
                     showToast("Swift API failed to fetch bio.", getAssetIDByName("Small"));
                 }
             }
@@ -130,8 +130,8 @@ export default () => {
         unregisterTrAuto = registerCommand({
             name: "tr-auto",
             displayName: "tr-auto",
-            description: "[Swift Translate] Toggle live auto-translation for all incoming messages here",
-            displayDescription: "[Swift Translate] Toggle live auto-translation for all incoming messages here",
+            description: "[Next Translator] Toggle live auto-translation for all incoming messages here",
+            displayDescription: "[Next Translator] Toggle live auto-translation for all incoming messages here",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -154,8 +154,8 @@ export default () => {
         unregisterTrImmersive = registerCommand({
             name: "tr-immersive",
             displayName: "tr-immersive",
-            description: "[Swift Translate] Toggle Immersive Dual-Text mode",
-            displayDescription: "[Swift Translate] Toggle Immersive Dual-Text mode",
+            description: "[Next Translator] Toggle Immersive Dual-Text mode",
+            displayDescription: "[Next Translator] Toggle Immersive Dual-Text mode",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -168,8 +168,8 @@ export default () => {
         unregisterTrOutgoing = registerCommand({
             name: "tr-outgoing",
             displayName: "tr-outgoing",
-            description: "[Swift Translate] Toggle auto-translating all your outgoing messages",
-            displayDescription: "[Swift Translate] Toggle auto-translating all your outgoing messages",
+            description: "[Next Translator] Toggle auto-translating all your outgoing messages",
+            displayDescription: "[Next Translator] Toggle auto-translating all your outgoing messages",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -182,8 +182,8 @@ export default () => {
         unregisterTrEngine = registerCommand({
             name: "tr-engine",
             displayName: "tr-engine",
-            description: "[Swift Translate] Switch between Google Translate and DeepL",
-            displayDescription: "[Swift Translate] Switch between Google Translate and DeepL",
+            description: "[Next Translator] Switch between Google Translate and DeepL",
+            displayDescription: "[Next Translator] Switch between Google Translate and DeepL",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -207,8 +207,8 @@ export default () => {
         unregisterTrLangIn = registerCommand({
             name: "tr-lang-in",
             displayName: "tr-lang-in",
-            description: "[Swift Translate] Set your target language for incoming translated messages",
-            displayDescription: "[Swift Translate] Set your target language for incoming translated messages",
+            description: "[Next Translator] Set your target language for incoming translated messages",
+            displayDescription: "[Next Translator] Set your target language for incoming translated messages",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -278,8 +278,8 @@ export default () => {
         unregisterTrLangOut = registerCommand({
             name: "tr-lang-out",
             displayName: "tr-lang-out",
-            description: "[Swift Translate] Set your target language for outgoing translated messages",
-            displayDescription: "[Swift Translate] Set your target language for outgoing translated messages",
+            description: "[Next Translator] Set your target language for outgoing translated messages",
+            displayDescription: "[Next Translator] Set your target language for outgoing translated messages",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -357,7 +357,7 @@ export default () => {
             unregisterTrLangOut?.();
         }
     } catch (e) {
-        console.error("Swift Translate: Failed to patch commands", e);
+        console.error("Next Translator: Failed to patch commands", e);
         return () => {};
     }
 }
