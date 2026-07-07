@@ -20,6 +20,9 @@ let unregisterTrOutgoing: () => void;
 let unregisterTrEngine: () => void;
 let unregisterTrLangIn: () => void;
 let unregisterTrLangOut: () => void;
+let unregisterTrTemp: () => void;
+let unregisterTrModel: () => void;
+let unregisterTrChannelRule: () => void;
 
 export default () => {
     try {
@@ -195,8 +198,43 @@ export default () => {
             inputType: 1,
             type: 1,
             execute: async (args, ctx) => {
-                settings.translator = settings.translator === 0 ? 1 : 0;
-                showToast(`Engine Switched: ${settings.translator === 1 ? 'Google Translate' : 'DeepL'}`, getAssetIDByName("Check"));
+                settings.translator = settings.translator === 0 ? 1 : settings.translator === 1 ? 2 : settings.translator === 2 ? 3 : settings.translator === 3 ? 4 : settings.translator === 4 ? 5 : 0;
+                showToast(`Engine Switched: ${settings.translator === 1 ? 'Google Translate' : settings.translator === 2 ? 'AI Translator' : settings.translator === 3 ? 'Lingva Translate' : settings.translator === 4 ? 'MyMemory' : settings.translator === 5 ? 'LibreTranslate' : 'DeepL'}`, getAssetIDByName("Check"));
+            }
+        });
+
+        unregisterTrChannelRule = registerCommand({
+            name: "tr-channel-rule",
+            displayName: "tr-channel-rule",
+            description: "Set a specific translation language for the current channel",
+            displayDescription: "Set a specific translation language for the current channel",
+            options: [
+                {
+                    name: "language",
+                    displayName: "language",
+                    description: "Language code (e.g., en, es) or 'none' to clear",
+                    displayDescription: "Language code (e.g., en, es) or 'none' to clear",
+                    type: 3,
+                    required: true
+                }
+            ],
+            applicationId: "-1",
+            inputType: 1,
+            type: 1,
+            execute: async (args, ctx) => {
+                const lang = args.find(a => a.name === "language")?.value?.toLowerCase();
+                const channelId = ctx.channel.id;
+                if (lang === "none" || lang === "clear") {
+                    delete settings.channel_language_rules[channelId];
+                    settings.channel_language_rules = { ...settings.channel_language_rules };
+                    showToast("Cleared channel rule", getAssetIDByName("Check"));
+                } else {
+                    settings.channel_language_rules = {
+                        ...settings.channel_language_rules,
+                        [channelId]: lang
+                    };
+                    showToast(`Set channel language to ${lang}`, getAssetIDByName("Check"));
+                }
             }
         });
 
@@ -358,6 +396,70 @@ export default () => {
             }
         });
 
+        unregisterTrTemp = registerCommand({
+            name: "tr-temperature",
+            displayName: "tr-temperature",
+            description: "Change the AI Translator Temperature (0.0 to 1.0)",
+            displayDescription: "Change the AI Translator Temperature (0.0 to 1.0)",
+            applicationId: "-1",
+            inputType: 1,
+            type: 1,
+            options: [
+                {
+                    name: "temperature",
+                    displayName: "temperature",
+                    description: "0.0 = Fast/Literal, 0.5 = Balanced, 1.0 = Creative",
+                    displayDescription: "0.0 = Fast/Literal, 0.5 = Balanced, 1.0 = Creative",
+                    type: 3,
+                    required: true,
+                    choices: [
+                        { name: "0.0 (Fast & Literal)", displayName: "0.0 (Fast & Literal)", value: "0.0" },
+                        { name: "0.5 (Balanced)", displayName: "0.5 (Balanced)", value: "0.5" },
+                        { name: "1.0 (Creative)", displayName: "1.0 (Creative)", value: "1.0" }
+                    ]
+                }
+            ],
+            execute: async (args, ctx) => {
+                const temp = parseFloat(args.find(x => x.name === "temperature")?.value || "0");
+                settings.ai_temperature = temp;
+                showToast(`AI Temperature: ${temp}`, getAssetIDByName("Check"));
+            }
+        });
+
+        unregisterTrModel = registerCommand({
+            name: "tr-model",
+            displayName: "tr-model",
+            description: "Change the AI Translation Model",
+            displayDescription: "Change the AI Translation Model",
+            applicationId: "-1",
+            inputType: 1,
+            type: 1,
+            options: [
+                {
+                    name: "model",
+                    displayName: "model",
+                    description: "Select the AI model",
+                    displayDescription: "Select the AI model",
+                    type: 3,
+                    required: true,
+                    choices: [
+                        { name: "Gemini 1.5 Flash", displayName: "Gemini 1.5 Flash", value: "gemini-1.5-flash" },
+                        { name: "Gemini 1.5 Pro", displayName: "Gemini 1.5 Pro", value: "gemini-1.5-pro" },
+                        { name: "Llama 3 8B", displayName: "Llama 3 8B", value: "llama3-8b-8192" },
+                        { name: "Llama 3 70B", displayName: "Llama 3 70B", value: "llama3-70b-8192" },
+                        { name: "Free Proxy (Pollinations)", displayName: "Free Proxy (Pollinations)", value: "pollinations" }
+                    ]
+                }
+            ],
+            execute: async (args, ctx) => {
+                const model = args.find(x => x.name === "model")?.value;
+                if (model) {
+                    settings.ai_model = model;
+                    showToast(`AI Model: ${model}`, getAssetIDByName("Check"));
+                }
+            }
+        });
+
         return () => {
             unregisterTranslate?.();
             unregisterTrBio?.();
@@ -367,6 +469,9 @@ export default () => {
             unregisterTrEngine?.();
             unregisterTrLangIn?.();
             unregisterTrLangOut?.();
+            unregisterTrTemp?.();
+            unregisterTrModel?.();
+            unregisterTrChannelRule?.();
         }
     } catch (e) {
         console.error("Next Translator: Failed to patch commands", e);

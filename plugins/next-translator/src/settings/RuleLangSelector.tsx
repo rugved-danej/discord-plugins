@@ -1,14 +1,15 @@
 import { getAssetIDByName } from "@vendetta/ui/assets"
-import { React, ReactNative } from "@vendetta/metro/common"
+import { React, ReactNative, NavigationNative } from "@vendetta/metro/common"
 import { Forms, Search } from "@vendetta/ui/components"
 import { showToast } from "@vendetta/ui/toasts"
 import { useProxy } from "@vendetta/storage"
 import { settings } from ".."
 import { GoogleTranslateLangs } from "../lang"
 
-export default () => {
+export default (props: { channelId: string }) => {
     const { FormRow } = Forms
     const { ScrollView } = ReactNative
+    const navigation = NavigationNative.useNavigation()
     useProxy(settings)
     const [query, setQuery] = React.useState("")
     
@@ -25,10 +26,11 @@ export default () => {
                 key={value}
                 label={key}
                 leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://img.icons8.com/color/96/language.png" }} />}
-                trailing={settings.target_lang_incoming === value ? <FormRow.Icon source={getAssetIDByName("check")} /> : <FormRow.Arrow />}
                 onPress={() => {
-                    settings.target_lang_incoming = value
-                    showToast(`Target Language: ${key}`, getAssetIDByName("check"))
+                    settings.channel_language_rules ??= {};
+                    settings.channel_language_rules[props.channelId] = value;
+                    showToast(`Rule added! Target: ${key}`, getAssetIDByName("check"))
+                    navigation.goBack();
                 }}
             />)
         }

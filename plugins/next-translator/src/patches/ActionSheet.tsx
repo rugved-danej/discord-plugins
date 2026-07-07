@@ -1,5 +1,5 @@
 import { find, findByProps, findByStoreName } from "@vendetta/metro"
-import { FluxDispatcher, React, ReactNative, i18n, stylesheet } from "@vendetta/metro/common"
+import { FluxDispatcher, React, ReactNative, i18n, stylesheet, NavigationNative } from "@vendetta/metro/common"
 import { before, after } from "@vendetta/patcher"
 import { semanticColors } from "@vendetta/ui"
 import { getAssetIDByName } from "@vendetta/ui/assets"
@@ -10,7 +10,7 @@ import { settings } from ".."
 import { getLanguageName } from "../lang"
 import { showToast } from "@vendetta/ui/toasts"
 import { showConfirmationAlert } from "@vendetta/ui/alerts"
-import { DeepL, GoogleTranslate, AI } from "../api"
+import { DeepL, GoogleTranslate, AI, Lingva, MyMemory, translateWithFallback } from "../api"
 import { logger } from "@vendetta"
 import { maskText, unmaskText } from "../utils/placeholder"
 import { setChannelTargetLanguage } from "../utils/ChannelLanguageStore"
@@ -26,7 +26,7 @@ const separator = "\n"
 let styles: any
 
 let patchedActionSheets = new Set()
-let cachedData = new Map<string, string>()
+let cachedData = new Map<string, any>()
 
 export default () => {
     try {
@@ -47,13 +47,17 @@ export default () => {
 
         const beforeUnpatch = before("openLazy", LazyActionSheet, ([component, key, msg]) => {
             const message = msg?.message
-            if (typeof key !== "string" || !key.endsWith("MessageLongPressActionSheet") || !message) return
-            currentMessage = message;
+            const userId = msg?.user?.id;
+            if (typeof key !== "string") return;
+            if (!key.endsWith("MessageLongPressActionSheet") && !key.endsWith("UserProfilePopout")) return;
+            
+            if (message) currentMessage = message;
             component.then(instance => {
                 if (patchedActionSheets.has(instance)) return;
                 patchedActionSheets.add(instance);
                 
                 moduleUnpatch = after("default", instance, (_, component) => {
+                    const navigation = NavigationNative.useNavigation?.();
                     const message = currentMessage;
                     const buttons = findInReactTree(component, x => x?.[0]?.type?.name === "ActionSheetRow")
                     if (!buttons) return
@@ -66,10 +70,45 @@ export default () => {
                         message.id
                     )
                     
-                    if (!originalMessage?.content && !message.content) return
+                    if (key.endsWith("UserProfilePopout") && userId) {
+                        const hasAutoTransButton = buttons.some((x: any) => x?.key === "next-translator-user-auto")
+                        if (!hasAutoTransButton) {
+                            settings.auto_translate_users ??= {};
+                            const isAutoTrans = !!settings.auto_translate_users[userId];
+                            
+                            buttons.splice(0, 0, (
+                                <ActionSheetRow
+                                    key="next-translator-user-auto"
+                                    label={isAutoTrans ? "Stop Auto-Translating User" : "Auto-Translate User"}
+                                    icon={
+                                        <ActionSheetRow.Icon
+                                            source={getAssetIDByName("ic_locale_24px") || getAssetIDByName("LanguageIcon")}
+                                            IconComponent={() => (
+                                                <ReactNative.Image
+                                                    resizeMode="cover"
+                                                    style={styles.iconComponent}
+                                                    source={getAssetIDByName("ic_locale_24px") || getAssetIDByName("LanguageIcon")}
+                                                />
+                                            )}
+                                        />
+                                    }
+                                    onPress={() => {
+                                        if (hideActionSheet) hideActionSheet()
+                                        else LazyActionSheet.hideActionSheet()
+                                        
+                                        settings.auto_translate_users[userId] = !isAutoTrans;
+                                        showToast(isAutoTrans ? "User Auto-Translation Disabled" : "User Auto-Translation Enabled", getAssetIDByName("Check"));
+                                    }}
+                                />
+                            ))
+                        }
+                        return;
+                    }
 
-                    const messageId = originalMessage?.id ?? message.id
-                    const messageContent = originalMessage?.content ?? message.content
+                    if (!originalMessage?.content && !message?.content) return
+
+                    const messageId = originalMessage?.id ?? message?.id
+                    const messageContent = originalMessage?.content ?? message?.content ?? ""
                     const hasCachedData = cachedData.has(messageId)
 
                     const translateType = hasCachedData ? "Revert" : "Translate"
@@ -81,47 +120,41 @@ export default () => {
                         if (hideActionSheet) hideActionSheet()
                         else LazyActionSheet.hideActionSheet()
                         try {
-                            const target_lang = settings.target_lang_incoming || "en"
+                            const channelId = (originalMessage || message).channel_id;
+                            const target_lang = settings.channel_language_rules?.[channelId] || settings.target_lang_incoming || "en"
                             const isTranslated = translateType === "Translate"
-                            const isImmersive = settings.immersive_enabled
-                            const { textToTranslate, placeholders } = maskText(messageContent)
-                            var translate
-                            switch(Number(settings.translator)) {
-                                case 0:
-                                    console.log("Translating with DeepL: ", textToTranslate)
-                                    try {
-                                        translate = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, !isTranslated)
-                                    } catch (deeplErr) {
-                                        console.warn("Next Translator: DeepL failed, silently falling back to Google Translate...", deeplErr);
-                                        translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, !isTranslated)
-                                    }
-                                    break
-                                case 2:
-                                    console.log("Translating with AI: ", textToTranslate)
-                                    translate = await AI.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, !isTranslated)
-                                    break
-                                case 1:
-                                default:
-                                    console.log("Translating with GoogleTranslate: ", textToTranslate)
-                                    translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, !isTranslated)
-                                    break
-                            }
-                            
-                            const translatedText = unmaskText(translate.text, placeholders)
+                            const isImmersive = settings.immersive_enabled;
+                            let finalContent = "";
+                            let translatedEmbeds = [];
+                            let detectedLangStr = "";
 
-                            if (settings.smart_channel_routing && translate.source_lang) {
-                                const channelId = (originalMessage || message).channel_id;
-                                setChannelTargetLanguage(channelId, translate.source_lang)
-                            }
+                            if (isTranslated) {
 
-                            const sourceName = getLanguageName(translate.source_lang, settings.translator);
-                            const targetName = getLanguageName(target_lang, settings.translator);
-                            const detectedLang = translate.source_lang ? `[${sourceName} ➔ ${targetName}]` : `[${targetName}]`;
-                            const finalContent = isTranslated
-                                        ? (isImmersive
-                                            ? `${messageContent}${separator}${translatedText.trim()}\n\`${detectedLang}\``
-                                            : `${translatedText.trim()}\n\`${detectedLang}\``)
-                                        : cachedData.get(messageId)
+                                let mainSourceLang = "";
+
+                                if (messageContent) {
+                                    const { textToTranslate, placeholders } = maskText(messageContent);
+                                    const res = await translateWithFallback(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, true, settings.translator);
+                                    finalContent = unmaskText(res.text, placeholders);
+                                    mainSourceLang = res.source_lang || mainSourceLang;
+                                }
+
+                                if (settings.smart_channel_routing && mainSourceLang) {
+                                    const channelId = (originalMessage || message).channel_id;
+                                    setChannelTargetLanguage(channelId, mainSourceLang)
+                                }
+
+                                const sourceName = getLanguageName(mainSourceLang, settings.translator);
+                                const targetName = getLanguageName(target_lang, settings.translator);
+                                detectedLangStr = mainSourceLang ? `[${sourceName} ➔ ${targetName}]` : `[${targetName}]`;
+                                
+                                finalContent = isImmersive && messageContent 
+                                    ? `${messageContent}${separator}${finalContent.trim()}\n\`${detectedLangStr}\``
+                                    : (finalContent ? `${finalContent.trim()}\n\`${detectedLangStr}\`` : `\`${detectedLangStr}\``);
+                            } else {
+                                const cache = cachedData.get(messageId);
+                                finalContent = cache;
+                            }
 
                             const isSearchView = buttons.some((x: any) => {
                                 const lbl = String(x?.props?.label || x?.props?.message || x?.props?.text || "").toLowerCase();
@@ -135,7 +168,7 @@ export default () => {
                                     confirmText: "Close"
                                 })
                                 if (hideActionSheet) hideActionSheet()
-                                if (!originalMessage) return; // Only return if it's completely missing from cache
+                                if (!originalMessage) return;
                             }
 
                             FluxDispatcher.dispatch({

@@ -1,14 +1,16 @@
 import { getAssetIDByName } from "@vendetta/ui/assets"
+import { semanticColors } from "@vendetta/ui"
 import { React, ReactNative, NavigationNative } from "@vendetta/metro/common"
 import { Forms } from "@vendetta/ui/components"
 import { showToast } from "@vendetta/ui/toasts"
 import { useProxy } from "@vendetta/storage"
 import { settings } from ".."
 import AIModelPage from "./AIModelPage"
+import AISettingsPage from "./AISettingsPage"
 
 
 export default () => {
-    const { FormRow, FormInput } = Forms
+    const { FormRow, FormInput, FormSwitchRow } = Forms
     const { ScrollView, View, Text } = ReactNative
     const navigation = NavigationNative.useNavigation()
     useProxy(settings)
@@ -17,7 +19,7 @@ export default () => {
             <FormRow
                 label="DeepL"
                 subLabel="High-accuracy translation."
-                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://deepl.com&size=128" }} />}
+                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://www.google.com/s2/favicons?sz=64&domain=deepl.com" }} />}
                 trailing={<FormRow.Arrow />}
                 onPress={() => {
                     if (settings.translator == 0) return
@@ -38,12 +40,46 @@ export default () => {
             <FormRow
                 label="Google Translate"
                 subLabel="Fast, free translation."
-                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://translate.google.com&size=128" }} />}
+                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://www.google.com/s2/favicons?sz=64&domain=translate.google.com" }} />}
                 trailing={() => <FormRow.Arrow />}
                 onPress={() => {
                     if (settings.translator == 1) return
                     settings.translator = 1
                     showToast(`Saved Translator to Google Translate`, getAssetIDByName("check"))
+                }}
+            />
+            <FormRow
+                label="AI Translator (Beta)"
+                subLabel="Gemini / OpenAI / Groq Compatible translation."
+                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://www.google.com/s2/favicons?sz=64&domain=openai.com" }} />}
+                trailing={() => <FormRow.Arrow />}
+                onPress={() => {
+                    settings.translator = 2
+                    showToast(`Saved Translator to AI Translator`, getAssetIDByName("check"))
+                    navigation.push("VendettaCustomPage", {
+                        title: "AI Configuration",
+                        render: AISettingsPage
+                    })
+                }}
+            />
+            <FormRow
+                label="MyMemory"
+                subLabel="Free alternative (500 words/day)"
+                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://icon.horse/icon/mymemory.translated.net" }} />}
+                trailing={() => <FormRow.Arrow />}
+                onPress={() => {
+                    if (settings.translator == 4) return
+                    settings.translator = 4
+                    showToast(`Saved Translator to MyMemory`, getAssetIDByName("check"))
+                }}
+            />
+            <FormSwitchRow
+                label="Auto Engine Fallback"
+                subLabel="If your selected engine is rate limited, seamlessly switch to a backup free engine."
+                value={settings.auto_engine_fallback}
+                onValueChange={(v: boolean) => {
+                    settings.auto_engine_fallback = v;
+                    showToast(`Auto Fallback ${v ? "Enabled" : "Disabled"}`, getAssetIDByName("check"))
                 }}
             />
     </ScrollView>)

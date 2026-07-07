@@ -1,12 +1,11 @@
-import { findByProps } from "@vendetta/metro"
+import { findByProps, findByStoreName } from "@vendetta/metro"
 import { instead } from "@vendetta/patcher"
 import { settings } from "../index"
-import { DeepL, GoogleTranslate, AI } from "../api"
+import { DeepL, GoogleTranslate, AI, Lingva, MyMemory, translateWithFallback } from "../api"
 import { showToast } from "@vendetta/ui/toasts"
 import { maskText, unmaskText } from "../utils/placeholder"
 import { getChannelTargetLanguage } from "../utils/ChannelLanguageStore"
 import { FluxDispatcher } from "@vendetta/metro/common"
-import { findByStoreName } from "@vendetta/metro"
 import { reportError } from "../utils/telemetry"
 
 let UserStore: any;
@@ -15,7 +14,7 @@ const messageModule = findByProps("sendMessage", "receiveMessage");
 
 const processMessage = async (channelId: string, msg: any) => {
     if (settings.auto_translate_outgoing && !msg.__next_translator_translated) {
-        let target_lang = settings.target_lang_outgoing || "en";
+        let target_lang = settings.channel_language_rules?.[channelId] || settings.target_lang_outgoing || "en";
         if (settings.smart_channel_routing) {
             const smartLang = getChannelTargetLanguage(channelId);
             if (smartLang) target_lang = smartLang;
@@ -47,27 +46,14 @@ const processMessage = async (channelId: string, msg: any) => {
             const { textToTranslate, placeholders } = maskText(msg.content);
 
             let translate;
-            switch(Number(settings.translator)) {
-                case 0:
-                    try {
-                        translate = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
-                    } catch (deeplErr) {
-                        console.warn("Next Translator: DeepL failed, silently falling back to Google Translate...", deeplErr);
-                        translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
-                    }
-                    break;
-                case 2:
-                    translate = await AI.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
-                    break;
-                case 1:
-                default:
-                    translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
-                    break;
-            }
-            
-            if (translate && translate.text) {
-                msg.content = unmaskText(translate.text, placeholders);
-                msg.__next_translator_translated = true;
+            try {
+                translate = await translateWithFallback(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false, settings.translator);
+                if (translate && translate.text) {
+                    msg.content = unmaskText(translate.text, placeholders);
+                    msg.__next_translator_translated = true;
+                }
+            } catch (e) {
+                throw e;
             }
         } catch (e) {
             console.error("Next Translator: Failed to auto-translate outgoing message.", e);

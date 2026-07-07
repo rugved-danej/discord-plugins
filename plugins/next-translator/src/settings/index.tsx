@@ -12,7 +12,8 @@ import OutgoingTargetLang from "./OutgoingTargetLang"
 import SourceLang from "./SourceLang"
 import TranslatorPage from "./TranslatorPage"
 import DictionaryPage from "./DictionaryPage"
-import DeveloperPage from "./DeveloperPage"
+import ChannelRulesPage from "./ChannelRulesPage"
+import CloudSyncPage from "./CloudSyncPage"
 
 const { ScrollView, Text, View } = ReactNative
 const { FormRow, FormSwitchRow } = Forms
@@ -40,15 +41,37 @@ const styles = stylesheet.createThemedStyleSheet({
 })
 
 export default () => {
+    const { FormRow } = Forms
+    const { ScrollView, DeviceEventEmitter } = ReactNative
     const navigation = NavigationNative.useNavigation()
     useProxy(settings)
 
+    const [refreshKey, setRefreshKey] = React.useState(0)
+    React.useEffect(() => {
+        const listener = DeviceEventEmitter.addListener("NEXT_TRANSLATOR_RESTORED", () => {
+            setRefreshKey(k => k + 1)
+        })
+        return () => listener.remove()
+    }, [])
+
+    const getEngineIcon = (id: number) => {
+        switch(Number(id)) {
+            case 0: return "https://www.google.com/s2/favicons?sz=64&domain=deepl.com";
+            case 2: return "https://www.google.com/s2/favicons?sz=64&domain=openai.com";
+            case 4: return "https://icon.horse/icon/mymemory.translated.net";
+            case 1:
+            default: return "https://www.google.com/s2/favicons?sz=64&domain=translate.google.com";
+        }
+    };
+
+    const engineIcon = getEngineIcon(settings.translator);
+
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: semanticColors.BACKGROUND_MOBILE_PRIMARY }}>
+        <ScrollView key={refreshKey} style={{ flex: 1, backgroundColor: semanticColors.BACKGROUND_MOBILE_PRIMARY }}>
             <FormRow
                 label="Translation Engine"
-                subLabel={settings.translator === 1 ? "Google Translate (Fast, Free)" : "DeepL (Highly Accurate)"}
-                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://img.icons8.com/color/96/bot.png" }} />}
+                subLabel={settings.translator === 1 ? "Google Translate" : settings.translator === 2 ? "AI Translator (Beta)" : settings.translator === 4 ? "MyMemory" : "DeepL"}
+                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4, tintColor: typeof engineIcon === "number" ? semanticColors.INTERACTIVE_NORMAL : undefined }} source={typeof engineIcon === "number" ? engineIcon : { uri: engineIcon }} />}
                 trailing={() => <FormRow.Arrow />}
                 onPress={() => navigation.push("VendettaCustomPage", {
                     title: "Translation Engine",
@@ -118,6 +141,28 @@ export default () => {
                 onValueChange={(val: boolean) => {
                     settings.smart_channel_routing = val
                 }}
+            />
+
+            <FormRow
+                label="Smart Channel Rules"
+                subLabel="View and manage channels that have forced translation languages."
+                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://img.icons8.com/color/96/rules.png" }} />}
+                trailing={() => <FormRow.Arrow />}
+                onPress={() => navigation.push("VendettaCustomPage", {
+                    title: "Channel Rules",
+                    render: ChannelRulesPage,
+                })}
+            />
+
+            <FormRow
+                label="Cloud Sync"
+                subLabel="Backup and restore your settings and dictionaries to a MongoDB Atlas cluster."
+                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://img.icons8.com/color/96/cloud-sync.png" }} />}
+                trailing={() => <FormRow.Arrow />}
+                onPress={() => navigation.push("VendettaCustomPage", {
+                    title: "Cloud Sync",
+                    render: CloudSyncPage,
+                })}
             />
 
             <FormSwitchRow

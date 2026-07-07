@@ -1,11 +1,16 @@
 import { before, after } from "@vendetta/patcher"
 import { FluxDispatcher } from "@vendetta/metro/common"
-import { DeepL, GoogleTranslate, AI } from "./"
 import { settings } from ".."
 import { maskText, unmaskText } from "../utils/placeholder"
 import { getLanguageName } from "../lang"
 import { setChannelTargetLanguage } from "../utils/ChannelLanguageStore"
-import { reportError } from "../utils/telemetry"
+import DeepL from "./DeepL";
+import GoogleTranslate from "./GoogleTranslate";
+import AI from "./AI";
+import Lingva from "./Lingva";
+import MyMemory from "./MyMemory";
+import { translateWithFallback } from "./index";
+import { reportError } from "../utils/telemetry";
 
 let activeChannels = new Set<string>();
 
@@ -32,54 +37,47 @@ export default () => {
             if (event.type !== "MESSAGE_CREATE" && event.type !== "MESSAGE_UPDATE") return;
 
             const message = event.message;
-            if (!message || !message.channel_id || !message.content || message.content === "") return;
+            const authorId = message.author?.id;
+            const isUserAutoTranslated = authorId && settings.auto_translate_users?.[authorId];
 
-            if (!activeChannels.has(message.channel_id)) return;
+            if (!activeChannels.has(message.channel_id) && !isUserAutoTranslated) return;
 
             if (translatedMessageIds.has(message.id)) return;
 
-            const originalContent = message.content;
+            const originalContent = message.content || "";
 
             (async () => {
                 try {
-                    const target_lang = settings.target_lang_incoming || "en";
+                    const target_lang = settings.channel_language_rules?.[message.channel_id] || settings.target_lang_incoming || "en";
                     const isImmersive = settings.immersive_enabled;
-                    const { textToTranslate, placeholders } = maskText(originalContent);
-                    let translate;
-                    
-                    switch(Number(settings.translator)) {
-                        case 0:
-                            try {
-                                translate = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
-                            } catch (deeplErr) {
-                                console.warn("Next Translator: Auto Incoming DeepL failed, falling back to Google Translate...");
-                                translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
-                            }
-                            break;
-                        case 2:
-                            translate = await AI.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
-                            break;
-                        case 1:
-                        default:
-                            translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
-                            break;
+
+                    let finalContent = "";
+                    let mainSourceLang = "";
+                    let hasTranslated = false;
+
+                    if (originalContent) {
+                        const { textToTranslate, placeholders } = maskText(originalContent);
+                        const res = await translateWithFallback(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false, settings.translator);
+                        const newText = unmaskText(res.text, placeholders);
+                        if (newText !== originalContent) hasTranslated = true;
+                        finalContent = newText;
+                        mainSourceLang = res.source_lang || mainSourceLang;
                     }
 
-                    if (translate && translate.text && translate.text !== originalContent) {
+                    if (hasTranslated) {
                         translatedMessageIds.add(message.id);
                         
-                        if (settings.smart_channel_routing && translate.source_lang) {
-                            setChannelTargetLanguage(message.channel_id, translate.source_lang);
+                        if (settings.smart_channel_routing && mainSourceLang) {
+                            setChannelTargetLanguage(message.channel_id, mainSourceLang);
                         }
 
-                        const translatedText = unmaskText(translate.text, placeholders);
-                        const sourceName = getLanguageName(translate.source_lang, settings.translator);
+                        const sourceName = getLanguageName(mainSourceLang, settings.translator);
                         const targetName = getLanguageName(target_lang, settings.translator);
-                        const detectedLang = translate.source_lang ? `[${sourceName} ➔ ${targetName}]` : `[${targetName}]`;
+                        const detectedLang = mainSourceLang ? `[${sourceName} ➔ ${targetName}]` : `[${targetName}]`;
                         
-                        const finalContent = isImmersive 
-                            ? `${originalContent}\n${translatedText.trim()}\n\`${detectedLang}\``
-                            : `${translatedText.trim()}\n\`${detectedLang}\``;
+                        finalContent = isImmersive && originalContent
+                            ? `${originalContent}\n${finalContent.trim()}\n\`${detectedLang}\``
+                            : (finalContent ? `${finalContent.trim()}\n\`${detectedLang}\`` : `\`${detectedLang}\``);
 
                         FluxDispatcher.dispatch({
                             type: "MESSAGE_UPDATE",

@@ -17,8 +17,10 @@ const translate = async (text: string, source_lang: string = "auto", target_lang
 
         const response = await fetch(API_URL);
         if (!response.ok) {
-            const errText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errText.substring(0, 150)}`);
+            if (response.status === 429) {
+                throw new Error(`Google Rate Limit (HTTP 429). You are translating too fast! Google has temporarily blocked your IP. Please wait a few minutes.`);
+            }
+            throw new Error(`Google API Error (HTTP ${response.status})`);
         }
         
         const data = await response.json();

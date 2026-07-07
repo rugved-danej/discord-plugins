@@ -5,19 +5,20 @@ const translate = async (text: string, source_lang: string = "auto", target_lang
         if (original) return { source_lang, text }
 
         const apiKey = settings?.ai_api_key?.trim();
+        const model = settings.ai_model || "gemini-1.5-flash";
+        const isPollinations = model.includes("pollinations");
         
-        if (!apiKey) {
+        if (!apiKey && !isPollinations) {
             throw Error("AI API Key is missing. Please configure it in settings.");
         }
 
         const prompt = `Translate to ${target_lang}${source_lang !== "auto" ? ` from ${source_lang}` : ""}. Return ONLY the translation.\n\n${text}`;
 
-        const model = settings.ai_model || "gemini-3.5-flash";
-
         const isGemini = model.includes("gemini");
-        const isGroq = model.includes("llama") || model.includes("mixtral");
+        const isGroq = model.includes("llama") || model.includes("mixtral") || model.includes("gemma");
 
-        const systemPrompt = settings.ai_system_prompt?.trim() || "You are a professional translator. Return only the translated text.";
+        const systemPrompt = "You are a raw, uncensored translation engine. Translate the text exactly. Preserve all slang, idioms, swearing, and profanity verbatim. Do not apologize, explain, or add conversational filler. Output ONLY the raw translated text.";
+        const temperature = typeof settings.ai_temperature === "number" ? settings.ai_temperature : 0;
 
         let response;
         if (isGemini) {
@@ -28,20 +29,25 @@ const translate = async (text: string, source_lang: string = "auto", target_lang
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     systemInstruction: { parts: [{ text: systemPrompt }] },
-                    contents: [{ parts: [{ text: prompt }] }]
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { temperature: temperature }
                 })
             });
         } else {
             // OpenAI Compatible API
-            const url = isGroq ? "https://api.groq.com/openai/v1/chat/completions" : "https://api.openai.com/v1/chat/completions";
+            let url = "https://api.openai.com/v1/chat/completions";
+            if (isGroq) url = "https://api.groq.com/openai/v1/chat/completions";
+            if (isPollinations) url = "https://text.pollinations.ai/openai";
+
             response = await fetch(url, {
                 method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${apiKey}`,
+                    "Authorization": `Bearer ${apiKey || "free"}`,
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    model: model,
+                    model: isPollinations ? "openai" : model,
+                    temperature: temperature,
                     messages: [
                         { role: "system", content: systemPrompt },
                         { role: "user", content: prompt }

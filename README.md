@@ -1,28 +1,22 @@
-# 🐰 Rugved's Discord Plugins Workspace
+# 🚀 Rugved's Discord Plugins
 
-Welcome to my personal Discord plugins workspace for Discord modded clients!
+Welcome to my custom repository of high-performance plugins for Vendetta/Bunny on Discord Mobile!
 
-## 🚀 Available Plugins
+## 📦 Available Plugins
 
-### 🌐 [Next Translator](./plugins/next-translator/README.md) (v1.0.0)
-The most powerful, seamless, and intelligent two-way translation engine for Discord. Features include:
-- **Optimistic UI Ghost Messages:** Get instant "Translating... ⏳" visual feedback in your chat while you wait for the API!
-- **Silent Engine Fallback:** Automatically switches between DeepL and Google Translate if an API fails, ensuring 100% uptime.
-- **Live Incoming Auto-Translate:** Instantly auto-translates all messages in a specific channel as they arrive.
-- **Robust Placeholder Engine:** Uses advanced alphanumeric masking (`__PH0__`) to protect URLs, Mentions, Emojis, and Code Blocks from translation corruption.
-- **Immersive Dual-Text Mode:** View both the original and translated text stacked seamlessly.
+### [🌐 Next Translator (v1.1.0)](./plugins/next-translator)
+The most advanced translation plugin ever created for mobile Discord. 
+
+**Key Features:**
+- 6 Different Translation Engines (Google, DeepL, AI, Libre, MyMemory, Lingva).
+- Immersive Dual-Text translation display.
+- Custom Dictionary engine to ignore specific words/slang.
+- Native MongoDB Cloud Sync to backup and restore settings and dictionaries.
+- Smart Channel Rules to auto-route languages per channel.
+
+**How to Install:**
+Install it directly via Vendetta/Bunny plugin fetcher using the raw URL of the compiled plugin, or build it locally using `npm run build`!
 
 ---
 
-## 🛠 Building the Plugins
-This workspace uses a standard Rollup build architecture. To compile the plugins:
-
-1. Install dependencies:
-   ```bash
-   pnpm install
-   ```
-2. Build the plugins:
-   ```bash
-   npm run build
-   ```
-The compiled output will be generated inside the `dist/` folder, ready to be installed into your Discord client via raw URL.
+*Made with ❤️ by Rugved.*
