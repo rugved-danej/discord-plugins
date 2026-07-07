@@ -5,7 +5,10 @@ import { DeepL, GoogleTranslate } from "../api"
 import { showToast } from "@vendetta/ui/toasts"
 import { maskText, unmaskText } from "../utils/placeholder"
 import { getChannelTargetLanguage } from "../utils/ChannelLanguageStore"
+import { FluxDispatcher } from "@vendetta/metro/common"
+import { findByStoreName } from "@vendetta/metro"
 
+let UserStore: any;
 
 const messageModule = findByProps("sendMessage", "receiveMessage");
 
@@ -17,7 +20,27 @@ const processMessage = async (channelId: string, msg: any) => {
             if (smartLang) target_lang = smartLang;
         }
         
-
+        let fakeId: string | null = null;
+        try {
+            UserStore ??= findByStoreName("UserStore");
+            const user = UserStore?.getCurrentUser?.();
+            if (user) {
+                // Discord requires `id` to be a valid 18+ digit Snowflake. 
+                // If it isn't, the reducer throws and breaks the dispatch cycle!
+                fakeId = "99999" + Date.now().toString();
+                messageModule.receiveMessage(channelId, {
+                    id: fakeId,
+                    channel_id: channelId,
+                    content: `*Translating: "${msg.content.slice(0, 50)}${msg.content.length > 50 ? "..." : ""}"* ⏳`,
+                    author: user,
+                    state: "SENDING",
+                    type: 0,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        } catch (e) {
+            console.warn("Next Translator: Failed to dispatch ghost message", e);
+        }
 
         try {
             const { textToTranslate, placeholders } = maskText(msg.content);
@@ -45,6 +68,14 @@ const processMessage = async (channelId: string, msg: any) => {
         } catch (e) {
             console.error("Next Translator: Failed to auto-translate outgoing message.", e);
             showToast("Next Translator: Engine failed to convert outgoing text.", undefined);
+        } finally {
+            if (fakeId) {
+                FluxDispatcher.dispatch({
+                    type: "MESSAGE_DELETE",
+                    id: fakeId,
+                    channel_id: channelId
+                });
+            }
         }
     }
 };
