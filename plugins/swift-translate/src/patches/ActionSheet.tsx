@@ -113,14 +113,16 @@ export default () => {
                                             : `${translatedText.trim()}\n\`${detectedLang}\``)
                                         : cachedData.get(messageId)
 
-                            if (!originalMessage) {
+                            const isMainChatView = buttons.findIndex((x: any) => x?.props?.message === i18n.Messages.MARK_UNREAD) !== -1;
+
+                            if (!originalMessage || !isMainChatView) {
                                 showConfirmationAlert({
                                     title: "Swift Translation",
                                     content: finalContent,
                                     confirmText: "Close"
                                 })
                                 if (hideActionSheet) hideActionSheet()
-                                return;
+                                if (!originalMessage) return; // Only return if it's completely missing from cache
                             }
 
                             FluxDispatcher.dispatch({
