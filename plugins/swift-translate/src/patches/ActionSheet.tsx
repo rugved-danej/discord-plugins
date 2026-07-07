@@ -100,6 +100,7 @@ export default () => {
                             const translatedText = unmaskText(translate.text, placeholders)
 
                             if (settings.smart_channel_routing && translate.source_lang) {
+                                const channelId = (originalMessage || message).channel_id;
                                 setChannelTargetLanguage(channelId, translate.source_lang)
                             }
 
