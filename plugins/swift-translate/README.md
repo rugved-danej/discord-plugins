@@ -65,12 +65,14 @@ When you hit "Send" with **Auto-Translate Outgoing** enabled, the plugin hooks i
 ---
 
 ## 🛠 Installation
-*This plugin is designed for Discord modded clients.*
+*This plugin is designed for Discord modded clients (Vendetta, Enmity, etc).*
 
-1. Copy the raw plugin link from the `dist/` folder on this repository.
-2. Open Discord -> Settings -> Plugins.
-3. Tap the `+` icon and paste the URL.
-4. Restart your client and head into the Next Translator settings to configure your target languages!
+1. Open your Discord modded client -> Settings -> Plugins.
+2. Tap the `+` icon and paste this exact URL:
+   ```
+   https://raw.githubusercontent.com/rugved-danej/discord-plugins/main/plugins/swift-translate/
+   ```
+3. Restart your client and head into the Next Translator settings to configure your target languages!
 
 ---
 *Built with ❤️ for a connected world.*
