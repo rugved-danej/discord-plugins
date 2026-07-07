@@ -216,10 +216,10 @@ export default () => {
                 {
                     name: "language",
                     displayName: "language",
-                    description: "Select one of the 25 most common languages",
-                    displayDescription: "Select one of the 25 most common languages",
+                    description: "Select from 25 common languages",
+                    displayDescription: "Select from 25 common languages",
                     type: 3,
-                    required: true,
+                    required: false,
                     choices: [
                         { name: "English", displayName: "English", value: "English" },
                         { name: "Spanish", displayName: "Spanish", value: "Spanish" },
@@ -247,11 +247,24 @@ export default () => {
                         { name: "Finnish", displayName: "Finnish", value: "Finnish" },
                         { name: "Ukrainian", displayName: "Ukrainian", value: "Ukrainian" }
                     ]
+                },
+                {
+                    name: "custom",
+                    displayName: "custom",
+                    description: "OR type ANY language name or code (e.g. Spanish or ES)",
+                    displayDescription: "OR type ANY language name or code (e.g. Spanish or ES)",
+                    type: 3,
+                    required: false
                 }
             ],
             execute: async (args, ctx) => {
-                const query = args.find(x => x.name === "language")?.value;
-                if (!query) return;
+                const customQuery = args.find(x => x.name === "custom")?.value;
+                const dropdownQuery = args.find(x => x.name === "language")?.value;
+                const query = customQuery || dropdownQuery;
+                if (!query) {
+                    showToast(`Please select or type a language.`, getAssetIDByName("Small"));
+                    return;
+                }
                 const match = resolveLangCode(query);
                 if (match) {
                     settings.target_lang_incoming = match.code;
@@ -274,10 +287,10 @@ export default () => {
                 {
                     name: "language",
                     displayName: "language",
-                    description: "Select one of the 25 most common languages",
-                    displayDescription: "Select one of the 25 most common languages",
+                    description: "Select from 25 common languages",
+                    displayDescription: "Select from 25 common languages",
                     type: 3,
-                    required: true,
+                    required: false,
                     choices: [
                         { name: "English", displayName: "English", value: "English" },
                         { name: "Spanish", displayName: "Spanish", value: "Spanish" },
@@ -305,11 +318,24 @@ export default () => {
                         { name: "Finnish", displayName: "Finnish", value: "Finnish" },
                         { name: "Ukrainian", displayName: "Ukrainian", value: "Ukrainian" }
                     ]
+                },
+                {
+                    name: "custom",
+                    displayName: "custom",
+                    description: "OR type ANY language name or code (e.g. Spanish or ES)",
+                    displayDescription: "OR type ANY language name or code (e.g. Spanish or ES)",
+                    type: 3,
+                    required: false
                 }
             ],
             execute: async (args, ctx) => {
-                const query = args.find(x => x.name === "language")?.value;
-                if (!query) return;
+                const customQuery = args.find(x => x.name === "custom")?.value;
+                const dropdownQuery = args.find(x => x.name === "language")?.value;
+                const query = customQuery || dropdownQuery;
+                if (!query) {
+                    showToast(`Please select or type a language.`, getAssetIDByName("Small"));
+                    return;
+                }
                 const match = resolveLangCode(query);
                 if (match) {
                     settings.target_lang_outgoing = match.code;
