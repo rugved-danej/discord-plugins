@@ -1,6 +1,6 @@
 # 🐰 Rugved's Discord Plugins Workspace
 
-Welcome to my personal Discord plugins workspace for the Vendetta/Bunny ecosystem!
+Welcome to my personal Discord plugins workspace for Discord modded clients!
 
 ## 🚀 Available Plugins
 

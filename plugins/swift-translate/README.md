@@ -65,7 +65,7 @@ When you hit "Send" with **Auto-Translate Outgoing** enabled, the plugin hooks i
 ---
 
 ## 🛠 Installation
-*This plugin is designed for the Vendetta client architecture.*
+*This plugin is designed for Discord modded clients.*
 
 1. Copy the raw plugin link from the `dist/` folder on this repository.
 2. Open Discord -> Settings -> Plugins.
