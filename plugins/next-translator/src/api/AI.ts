@@ -2,7 +2,6 @@ import { settings } from "../index"
 
 const translate = async (text: string, source_lang: string = "auto", target_lang: string, original: boolean = false) => {
     try {
-        if (original) return { source_lang, text }
 
         const apiKey = settings?.ai_api_key?.trim();
         const model = settings.ai_model || "gemini-1.5-flash";

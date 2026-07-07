@@ -3,7 +3,6 @@ import { GoogleTranslateResponse } from "../type"
 
 const translate = async (text: string, source_lang: string = "auto", target_lang: string, original: boolean = false) => {
     try {
-        if (original) return { source_lang, text }
 
         const qs = [
             `client=gtx`,

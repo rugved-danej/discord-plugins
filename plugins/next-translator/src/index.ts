@@ -20,8 +20,6 @@ export const settings: {
     ai_system_prompt?: string
     channel_targets?: Record<string, string>
     auto_engine_fallback?: boolean
-    custom_lingva_url?: string
-    custom_libre_url?: string
     channel_language_rules?: Record<string, string>
     ai_engine?: string
     ai_temperature?: number

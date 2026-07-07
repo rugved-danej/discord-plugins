@@ -6,8 +6,6 @@ const API_URL = "https://deeplx.1stg.me/translate"
 
 const translate = async (text: string, source_lang: string = "auto", target_lang: string, original: boolean = false) => {
     try {
-        if (original) return { source_lang, text }
-
         const apiKey = settings?.deepl_api_key?.trim();
         if (apiKey) {
             const isFree = apiKey.endsWith(":fx");

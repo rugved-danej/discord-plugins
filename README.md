@@ -8,7 +8,7 @@ Welcome to my custom repository of high-performance plugins for Vendetta/Bunny o
 The most advanced translation plugin ever created for mobile Discord. 
 
 **Key Features:**
-- 6 Different Translation Engines (Google, DeepL, AI, Libre, MyMemory, Lingva).
+- 4 Different Translation Engines (Google, DeepL, AI, MyMemory).
 - Immersive Dual-Text translation display.
 - Custom Dictionary engine to ignore specific words/slang.
 - Native MongoDB Cloud Sync to backup and restore settings and dictionaries.

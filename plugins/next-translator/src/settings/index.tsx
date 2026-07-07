@@ -70,7 +70,7 @@ export default () => {
         <ScrollView key={refreshKey} style={{ flex: 1, backgroundColor: semanticColors.BACKGROUND_MOBILE_PRIMARY }}>
             <FormRow
                 label="Translation Engine"
-                subLabel={settings.translator === 1 ? "Google Translate" : settings.translator === 2 ? "AI Translator (Beta)" : settings.translator === 4 ? "MyMemory" : "DeepL"}
+                subLabel={settings.translator === 1 ? "Google Translate" : settings.translator === 2 ? "AI Translator (Beta)" : "MyMemory"}
                 leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4, tintColor: typeof engineIcon === "number" ? semanticColors.INTERACTIVE_NORMAL : undefined }} source={typeof engineIcon === "number" ? engineIcon : { uri: engineIcon }} />}
                 trailing={() => <FormRow.Arrow />}
                 onPress={() => navigation.push("VendettaCustomPage", {

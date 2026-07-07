@@ -4,7 +4,7 @@ The ultimate, all-in-one translation powerhouse for Discord (Vendetta/Bunny). St
 
 ## ✨ Features
 
-* **Six High-Speed Engines**: Seamlessly switch between Google Translate, DeepL, LibreTranslate, MyMemory, Lingva, and our state-of-the-art AI Translator. 
+* **Four High-Speed Engines**: Seamlessly switch between Google Translate, DeepL, MyMemory, and our state-of-the-art AI Translator. 
 * **Immersive Dual-Text Mode**: Instead of replacing the original message, view both the original text and the translated text beautifully formatted side-by-side!
 * **Smart Channel Rules**: Automatically enforce target languages for specific channels without having to manually swap your settings. (Dashboard included!)
 * **Cloud Sync Server ☁️**: Built-in native support for MongoDB cloud syncing. Backup your custom dictionary, settings, and rules to the cloud and instantly restore them across devices with a secret Security PIN.
