@@ -46,41 +46,5 @@ export default () => {
                     showToast(`Saved Translator to Google Translate`, getAssetIDByName("check"))
                 }}
             />
-            <FormRow
-                label="AI Translator"
-                subLabel="Gemini / OpenAI Compatible translation."
-                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://openai.com&size=128" }} />}
-                trailing={() => <FormRow.Arrow />}
-                onPress={() => {
-                    if (settings.translator == 2) return
-                    settings.translator = 2
-                    showToast(`Saved Translator to AI Translator`, getAssetIDByName("check"))
-                }}
-            />
-            {settings.translator === 2 && (
-                <View style={{ padding: 15 }}>
-                    <Text style={{ color: "gray", marginTop: 15, marginBottom: 5 }}>AI API Key</Text>
-                    <FormInput
-                        placeholder="Required for AI translation..."
-                        value={settings.ai_api_key}
-                        onChange={(x: string) => settings.ai_api_key = x.trim()}
-                    />
-                    <FormRow
-                        label="AI Model"
-                        subLabel={settings.ai_model || "gemini-1.5-flash"}
-                        trailing={() => <FormRow.Arrow />}
-                        onPress={() => navigation.push("VendettaCustomPage", {
-                            title: "Select AI Model",
-                            render: AIModelPage
-                        })}
-                    />
-                    <Text style={{ color: "gray", marginTop: 15, marginBottom: 5 }}>Custom AI Tone / Personas (Optional)</Text>
-                    <FormInput
-                        placeholder="e.g. Translate into Gen-Z slang..."
-                        value={settings.ai_system_prompt}
-                        onChange={(x: string) => settings.ai_system_prompt = x}
-                    />
-                </View>
-            )}
     </ScrollView>)
 }

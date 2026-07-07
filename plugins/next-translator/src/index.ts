@@ -26,6 +26,7 @@ try {
     settings.target_lang_outgoing ??= "en"
     settings.source_lang ??= "auto"
     settings.translator ??= 1
+    if (settings.translator === 2) settings.translator = 1;
     settings.immersive_enabled ??= true
     settings.auto_translate_outgoing ??= false
     settings.smart_channel_routing ??= false
