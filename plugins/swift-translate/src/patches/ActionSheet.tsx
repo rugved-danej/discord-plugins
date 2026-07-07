@@ -113,9 +113,12 @@ export default () => {
                                             : `${translatedText.trim()}\n\`${detectedLang}\``)
                                         : cachedData.get(messageId)
 
-                            const isMainChatView = buttons.findIndex((x: any) => x?.props?.message === i18n.Messages.MARK_UNREAD) !== -1;
+                            const isSearchView = buttons.some((x: any) => {
+                                const lbl = String(x?.props?.label || x?.props?.message || x?.props?.text || "").toLowerCase();
+                                return lbl.includes("jump") || lbl.includes("go to");
+                            });
 
-                            if (!originalMessage || !isMainChatView) {
+                            if (!originalMessage || isSearchView) {
                                 showConfirmationAlert({
                                     title: "Swift Translation",
                                     content: finalContent,
