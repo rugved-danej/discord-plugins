@@ -4,7 +4,7 @@ Welcome to my custom repository of high-performance plugins for Vendetta/Bunny o
 
 ## 📦 Available Plugins
 
-### [🌐 Next Translator (v1.1.0)](./plugins/next-translator)
+### [🌐 Next Translator (v1.1.1)](./plugins/next-translator)
 The most advanced translation plugin ever created for mobile Discord. 
 
 **Key Features:**

@@ -8,7 +8,7 @@
         }
     ],
     "main": "src/index.ts",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "vendetta": {
         "icon": "ic_locale_24px"
     }

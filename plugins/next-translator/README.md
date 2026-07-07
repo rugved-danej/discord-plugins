@@ -1,4 +1,4 @@
-# 🌐 Next Translator (v1.1.0)
+# 🌐 Next Translator (v1.1.1)
 
 The ultimate, all-in-one translation powerhouse for Discord (Vendetta/Bunny). Stop switching apps to translate messages, and break the language barrier effortlessly.
 
