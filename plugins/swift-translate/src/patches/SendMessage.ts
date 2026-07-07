@@ -5,6 +5,10 @@ import { DeepL, GoogleTranslate } from "../api"
 import { showToast } from "@vendetta/ui/toasts"
 import { maskText, unmaskText } from "../utils/placeholder"
 import { getChannelTargetLanguage } from "../utils/ChannelLanguageStore"
+import { FluxDispatcher } from "@vendetta/metro/common"
+import { findByStoreName } from "@vendetta/metro"
+
+let UserStore: any;
 
 const messageModule = findByProps("sendMessage", "receiveMessage");
 
@@ -16,6 +20,28 @@ const processMessage = async (channelId: string, msg: any) => {
             if (smartLang) target_lang = smartLang;
         }
         
+        let fakeId: string | null = null;
+        try {
+            UserStore ??= findByStoreName("UserStore");
+            const user = UserStore?.getCurrentUser?.();
+            if (user) {
+                fakeId = "swift-translate-" + Date.now();
+                FluxDispatcher.dispatch({
+                    type: "MESSAGE_CREATE",
+                    message: {
+                        id: fakeId,
+                        channel_id: channelId,
+                        content: `*Translating: "${msg.content.slice(0, 50)}${msg.content.length > 50 ? "..." : ""}"* ⏳`,
+                        author: user,
+                        state: "SENDING",
+                        timestamp: new Date().toISOString()
+                    }
+                });
+            }
+        } catch (e) {
+            console.warn("Swift Translate: Failed to dispatch ghost message", e);
+        }
+
         try {
             const { textToTranslate, placeholders } = maskText(msg.content);
 
@@ -42,6 +68,14 @@ const processMessage = async (channelId: string, msg: any) => {
         } catch (e) {
             console.error("Swift Translate: Failed to auto-translate outgoing message.", e);
             showToast("Swift Translate: Engine failed to convert outgoing text.", undefined);
+        } finally {
+            if (fakeId) {
+                FluxDispatcher.dispatch({
+                    type: "MESSAGE_DELETE",
+                    id: fakeId,
+                    channel_id: channelId
+                });
+            }
         }
     }
 };
