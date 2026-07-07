@@ -1,4 +1,4 @@
-import { registerCommand, ApplicationCommandInputType, ApplicationCommandType } from "@vendetta/commands"
+import { registerCommand } from "@vendetta/commands"
 import { showToast } from "@vendetta/ui/toasts"
 import { showConfirmationAlert } from "@vendetta/ui/alerts"
 import { getAssetIDByName } from "@vendetta/ui/assets"
@@ -28,8 +28,8 @@ export default () => {
             description: "[Swift Translate] Instantly convert any text into your preferred language",
             displayDescription: "[Swift Translate] Instantly convert any text into your preferred language",
             applicationId: "-1",
-            inputType: ApplicationCommandInputType.BUILT_IN_TEXT,
-            type: ApplicationCommandType.CHAT,
+            inputType: 1,
+            type: 1,
             options: [
                 {
                     name: "text",
@@ -84,8 +84,8 @@ export default () => {
             description: "[Swift Translate] Fetch and convert a user's About Me section",
             displayDescription: "[Swift Translate] Fetch and convert a user's About Me section",
             applicationId: "-1",
-            inputType: ApplicationCommandInputType.BUILT_IN_TEXT,
-            type: ApplicationCommandType.CHAT,
+            inputType: 1,
+            type: 1,
             options: [
                 {
                     name: "user",
@@ -133,8 +133,8 @@ export default () => {
             description: "[Swift Translate] Toggle live auto-translation for all incoming messages here",
             displayDescription: "[Swift Translate] Toggle live auto-translation for all incoming messages here",
             applicationId: "-1",
-            inputType: ApplicationCommandInputType.BUILT_IN_TEXT,
-            type: ApplicationCommandType.CHAT,
+            inputType: 1,
+            type: 1,
             execute: async (args, ctx) => {
                 const channelId = ctx.channel?.id;
                 if (!channelId) {
@@ -157,8 +157,8 @@ export default () => {
             description: "[Swift Translate] Toggle Immersive Dual-Text mode",
             displayDescription: "[Swift Translate] Toggle Immersive Dual-Text mode",
             applicationId: "-1",
-            inputType: ApplicationCommandInputType.BUILT_IN_TEXT,
-            type: ApplicationCommandType.CHAT,
+            inputType: 1,
+            type: 1,
             execute: async (args, ctx) => {
                 settings.immersive_enabled = !settings.immersive_enabled;
                 showToast(`Immersive Mode: ${settings.immersive_enabled ? 'ON' : 'OFF'}`, getAssetIDByName("Check"));
@@ -171,8 +171,8 @@ export default () => {
             description: "[Swift Translate] Toggle auto-translating all your outgoing messages",
             displayDescription: "[Swift Translate] Toggle auto-translating all your outgoing messages",
             applicationId: "-1",
-            inputType: ApplicationCommandInputType.BUILT_IN_TEXT,
-            type: ApplicationCommandType.CHAT,
+            inputType: 1,
+            type: 1,
             execute: async (args, ctx) => {
                 settings.auto_translate_outgoing = !settings.auto_translate_outgoing;
                 showToast(`Outgoing Auto-Translate: ${settings.auto_translate_outgoing ? 'ON' : 'OFF'}`, getAssetIDByName("Check"));
@@ -185,8 +185,8 @@ export default () => {
             description: "[Swift Translate] Switch between Google Translate and DeepL",
             displayDescription: "[Swift Translate] Switch between Google Translate and DeepL",
             applicationId: "-1",
-            inputType: ApplicationCommandInputType.BUILT_IN_TEXT,
-            type: ApplicationCommandType.CHAT,
+            inputType: 1,
+            type: 1,
             execute: async (args, ctx) => {
                 settings.translator = settings.translator === 1 ? 0 : 1;
                 showToast(`Engine Switched: ${settings.translator === 1 ? 'Google Translate' : 'DeepL'}`, getAssetIDByName("Check"));
@@ -210,8 +210,8 @@ export default () => {
             description: "[Swift Translate] Set your target language for incoming translated messages",
             displayDescription: "[Swift Translate] Set your target language for incoming translated messages",
             applicationId: "-1",
-            inputType: ApplicationCommandInputType.BUILT_IN_TEXT,
-            type: ApplicationCommandType.CHAT,
+            inputType: 1,
+            type: 1,
             options: [
                 {
                     name: "language",
@@ -241,8 +241,8 @@ export default () => {
             description: "[Swift Translate] Set your target language for outgoing translated messages",
             displayDescription: "[Swift Translate] Set your target language for outgoing translated messages",
             applicationId: "-1",
-            inputType: ApplicationCommandInputType.BUILT_IN_TEXT,
-            type: ApplicationCommandType.CHAT,
+            inputType: 1,
+            type: 1,
             options: [
                 {
                     name: "language",
