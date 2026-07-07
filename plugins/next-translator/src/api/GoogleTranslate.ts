@@ -24,9 +24,11 @@ const translate = async (text: string, source_lang: string = "auto", target_lang
         
         const data = await response.json();
 
+        const textSegments = data?.[0]?.map((x: any) => x?.[0])?.filter(Boolean)?.join("") || "";
+
         return { 
             source_lang: data?.[2] || source_lang, 
-            text: data?.[0]?.[0]?.[0] || ""
+            text: textSegments
         }
     } catch (e) {
         throw Error(`Failed to fetch from Google Translate: ${e}`)

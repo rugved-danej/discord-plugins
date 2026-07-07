@@ -17,5 +17,5 @@ The most advanced translation plugin ever created for mobile Discord.
 **How to Install:**
 Copy the exact link below and paste it directly into Vendetta or Bunny's plugin fetcher:
 ```text
-https://raw.githubusercontent.com/rugved-danej/discord-plugins/main/plugins/next-translator/
+https://raw.githubusercontent.com/rugved-danej/discord-plugins/main/dist/next-translator/
 ```

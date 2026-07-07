@@ -27,5 +27,5 @@ Next Translator comes fully equipped with a background Auto-Sync engine. By defa
 Copy the exact link below and paste it into Vendetta or Bunny's plugin fetcher:
 
 ```text
-https://raw.githubusercontent.com/rugved-danej/discord-plugins/main/plugins/next-translator/
+https://raw.githubusercontent.com/rugved-danej/discord-plugins/main/dist/next-translator/
 ```
