@@ -32,7 +32,6 @@ const processMessage = async (channelId: string, msg: any) => {
                     content: `*Translating: "${msg.content.slice(0, 50)}${msg.content.length > 50 ? "..." : ""}"* ⏳`,
                     author: user,
                     state: "SENDING",
-                    flags: 64, // Ephemeral, local only
                     type: 0,
                     timestamp: new Date().toISOString()
                 });
