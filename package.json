@@ -4,7 +4,7 @@
 		"build": "node build.mjs"
 	},
 	"dependencies": {
-		"@swc/helpers": "^0.4.37"
+		"@swc/helpers": "^0.5.23"
 	},
 	"devDependencies": {
 		"@babel/core": "^8.0.1",
@@ -12,13 +12,13 @@
 		"@babel/preset-react": "^8.0.1",
 		"@babel/preset-typescript": "^8.0.1",
 		"@rollup/plugin-babel": "^7.1.0",
-		"@rollup/plugin-commonjs": "^24.1.0",
-		"@rollup/plugin-node-resolve": "^15.3.0",
-		"@swc/core": "^1.9.3",
-		"esbuild": "^0.16.17",
-		"rollup": "^3.29.5",
-		"rollup-plugin-esbuild": "^5.0.0",
-		"vendetta-types": "latest"
+		"@rollup/plugin-commonjs": "^29.0.3",
+		"@rollup/plugin-node-resolve": "^16.0.3",
+		"@swc/core": "^1.15.43",
+		"esbuild": "^0.28.1",
+		"rollup": "^4.62.2",
+		"rollup-plugin-esbuild": "^6.2.1",
+		"vendetta-types": "^2.4.21"
 	},
 	"pnpm": {
 		"peerDependencyRules": {
