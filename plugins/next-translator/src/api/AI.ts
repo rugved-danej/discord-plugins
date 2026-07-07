@@ -1,6 +1,6 @@
 import { settings } from "../index"
 
-const translate = async (text: string, source_lang: string = "auto", target_lang: string, original: boolean = false, contextMessages: {author: string, content: string}[] = []) => {
+const translate = async (text: string, source_lang: string = "auto", target_lang: string, original: boolean = false) => {
     try {
         if (original) return { source_lang, text }
 
@@ -10,12 +10,7 @@ const translate = async (text: string, source_lang: string = "auto", target_lang
             throw Error("AI API Key is missing. Please configure it in settings.");
         }
 
-        let contextString = "";
-        if (contextMessages && contextMessages.length > 0) {
-            contextString = "\n\nContext (Previous messages in conversation for better translation accuracy):\n" + contextMessages.map(m => `${m.author}: ${m.content}`).join("\n");
-        }
-
-        const prompt = `Translate the following text to ${target_lang}. Return ONLY the translated text, nothing else. If it's already in ${target_lang}, just return it as is.${source_lang !== "auto" ? ` The source language is ${source_lang}.` : ""}${contextString}\n\nText to translate:\n${text}`;
+        const prompt = `Translate to ${target_lang}${source_lang !== "auto" ? ` from ${source_lang}` : ""}. Return ONLY the translation.\n\n${text}`;
 
         const model = settings.ai_model || "gemini-3.5-flash";
 

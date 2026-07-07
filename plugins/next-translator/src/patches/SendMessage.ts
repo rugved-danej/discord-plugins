@@ -57,9 +57,7 @@ const processMessage = async (channelId: string, msg: any) => {
                     }
                     break;
                 case 2:
-                    const channelMessages = findByStoreName("MessageStore")?.getMessages(channelId)?.toArray() || [];
-                    const contextMessages = channelMessages.slice(-3).map((m: any) => ({ author: m.author?.username || "Unknown", content: m.content })).filter((m: any) => m.content);
-                    translate = await AI.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false, contextMessages);
+                    translate = await AI.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
                     break;
                 case 1:
                 default:

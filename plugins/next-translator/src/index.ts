@@ -26,14 +26,13 @@ try {
     settings.target_lang_outgoing ??= "en"
     settings.source_lang ??= "auto"
     settings.translator ??= 1
-    if (settings.translator === 2) settings.translator = 1;
     settings.immersive_enabled ??= true
     settings.auto_translate_outgoing ??= false
     settings.smart_channel_routing ??= false
     settings.custom_dictionary ??= []
     settings.deepl_api_key ??= ""
     settings.ai_api_key ??= ""
-    settings.ai_model ??= "gemini-3.5-flash"
+    settings.ai_model ??= "gemini-1.5-flash"
     settings.ai_system_prompt ??= ""
     settings.channel_targets ??= {}
 } catch (e) {

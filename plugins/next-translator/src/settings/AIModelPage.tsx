@@ -10,14 +10,22 @@ const OPENAI_ICON = "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON
 const GROQ_ICON = "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://groq.com&size=128";
 
 const MODELS = [
+    // Google Gemini
     { name: "Gemini 3.5 Flash (Fastest)", id: "gemini-3.5-flash", icon: GOOGLE_ICON },
     { name: "Gemini 3.5 Pro (Most Capable)", id: "gemini-3.5-pro", icon: GOOGLE_ICON },
-    { name: "Gemini 2.5 Flash", id: "gemini-2.5-flash", icon: GOOGLE_ICON },
-    { name: "Llama 3.1 70B (Groq)", id: "llama-3.1-70b-versatile", icon: GROQ_ICON },
+    { name: "Gemini 1.5 Flash", id: "gemini-1.5-flash", icon: GOOGLE_ICON },
+    { name: "Gemini 1.5 Pro", id: "gemini-1.5-pro", icon: GOOGLE_ICON },
+    
+    // Groq
+    { name: "Llama 3.3 70B (Groq)", id: "llama-3.3-70b-versatile", icon: GROQ_ICON },
     { name: "Llama 3.1 8B (Groq)", id: "llama-3.1-8b-instant", icon: GROQ_ICON },
     { name: "Mixtral 8x7B (Groq)", id: "mixtral-8x7b-32768", icon: GROQ_ICON },
+    { name: "Gemma 2 9B (Groq)", id: "gemma2-9b-it", icon: GROQ_ICON },
+
+    // OpenAI
     { name: "GPT 5.5 (Flagship)", id: "gpt-5.5", icon: OPENAI_ICON },
-    { name: "GPT 5.4 mini", id: "gpt-5.4-mini", icon: OPENAI_ICON },
+    { name: "GPT 5.4 Mini", id: "gpt-5.4-mini", icon: OPENAI_ICON },
+    { name: "o3 Mini", id: "o3-mini", icon: OPENAI_ICON },
     { name: "GPT 4o (Legacy)", id: "gpt-4o", icon: OPENAI_ICON }
 ]
 

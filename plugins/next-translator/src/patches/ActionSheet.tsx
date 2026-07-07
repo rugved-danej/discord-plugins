@@ -98,16 +98,7 @@ export default () => {
                                     break
                                 case 2:
                                     console.log("Translating with AI: ", textToTranslate)
-                                    const channelMessages = MessageStore.getMessages((originalMessage || message).channel_id)?.toArray() || [];
-                                    const msgIndex = channelMessages.findIndex((m: any) => m.id === messageId);
-                                    const contextMessages = [];
-                                    if (msgIndex !== -1) {
-                                        const prevMsgs = channelMessages.slice(Math.max(0, msgIndex - 3), msgIndex);
-                                        for (const m of prevMsgs) {
-                                            if (m.content) contextMessages.push({ author: m.author?.username || "Unknown", content: m.content });
-                                        }
-                                    }
-                                    translate = await AI.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, !isTranslated, contextMessages)
+                                    translate = await AI.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, !isTranslated)
                                     break
                                 case 1:
                                 default:

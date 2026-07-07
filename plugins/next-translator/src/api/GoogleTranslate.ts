@@ -6,19 +6,26 @@ const translate = async (text: string, source_lang: string = "auto", target_lang
         if (original) return { source_lang, text }
 
         const qs = [
-            `client=dict-chrome-ex`,
+            `client=gtx`,
             `sl=${encodeURIComponent(source_lang)}`,
             `tl=${encodeURIComponent(target_lang)}`,
+            `dt=t`,
             `q=${encodeURIComponent(text)}`
         ].join("&");
 
-        const API_URL = "https://translate.googleapis.com/translate_a/t?" + qs;
+        const API_URL = "https://translate.googleapis.com/translate_a/single?" + qs;
 
-        const data = await (await fetch(API_URL)).json()
+        const response = await fetch(API_URL);
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errText.substring(0, 150)}`);
+        }
+        
+        const data = await response.json();
 
         return { 
-            source_lang: data[0][1] || source_lang, 
-            text: data[0][0] || ""
+            source_lang: data?.[2] || source_lang, 
+            text: data?.[0]?.[0]?.[0] || ""
         }
     } catch (e) {
         throw Error(`Failed to fetch from Google Translate: ${e}`)
