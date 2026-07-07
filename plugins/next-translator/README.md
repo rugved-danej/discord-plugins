@@ -70,7 +70,7 @@ When you hit "Send" with **Auto-Translate Outgoing** enabled, the plugin hooks i
 1. Open your Discord modded client -> Settings -> Plugins.
 2. Tap the `+` icon and paste this exact URL:
    ```
-   https://raw.githubusercontent.com/rugved-danej/discord-plugins/main/plugins/next-translator/
+   https://raw.githubusercontent.com/rugved-danej/discord-plugins/main/dist/next-translator/
    ```
 3. Restart your client and head into the Next Translator settings to configure your target languages!
 
