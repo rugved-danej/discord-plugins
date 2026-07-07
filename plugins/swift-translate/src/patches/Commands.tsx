@@ -216,10 +216,37 @@ export default () => {
                 {
                     name: "language",
                     displayName: "language",
-                    description: "Language name or code (e.g. Spanish or ES)",
-                    displayDescription: "Language name or code (e.g. Spanish or ES)",
+                    description: "Select one of the 25 most common languages",
+                    displayDescription: "Select one of the 25 most common languages",
                     type: 3,
-                    required: true
+                    required: true,
+                    choices: [
+                        { name: "English", displayName: "English", value: "English" },
+                        { name: "Spanish", displayName: "Spanish", value: "Spanish" },
+                        { name: "French", displayName: "French", value: "French" },
+                        { name: "German", displayName: "German", value: "German" },
+                        { name: "Japanese", displayName: "Japanese", value: "Japanese" },
+                        { name: "Korean", displayName: "Korean", value: "Korean" },
+                        { name: "Chinese", displayName: "Chinese", value: "Chinese" },
+                        { name: "Russian", displayName: "Russian", value: "Russian" },
+                        { name: "Portuguese", displayName: "Portuguese", value: "Portuguese" },
+                        { name: "Italian", displayName: "Italian", value: "Italian" },
+                        { name: "Arabic", displayName: "Arabic", value: "Arabic" },
+                        { name: "Hindi", displayName: "Hindi", value: "Hindi" },
+                        { name: "Turkish", displayName: "Turkish", value: "Turkish" },
+                        { name: "Indonesian", displayName: "Indonesian", value: "Indonesian" },
+                        { name: "Dutch", displayName: "Dutch", value: "Dutch" },
+                        { name: "Polish", displayName: "Polish", value: "Polish" },
+                        { name: "Swedish", displayName: "Swedish", value: "Swedish" },
+                        { name: "Vietnamese", displayName: "Vietnamese", value: "Vietnamese" },
+                        { name: "Greek", displayName: "Greek", value: "Greek" },
+                        { name: "Czech", displayName: "Czech", value: "Czech" },
+                        { name: "Romanian", displayName: "Romanian", value: "Romanian" },
+                        { name: "Hungarian", displayName: "Hungarian", value: "Hungarian" },
+                        { name: "Danish", displayName: "Danish", value: "Danish" },
+                        { name: "Finnish", displayName: "Finnish", value: "Finnish" },
+                        { name: "Ukrainian", displayName: "Ukrainian", value: "Ukrainian" }
+                    ]
                 }
             ],
             execute: async (args, ctx) => {
@@ -247,10 +274,37 @@ export default () => {
                 {
                     name: "language",
                     displayName: "language",
-                    description: "Language name or code (e.g. Spanish or ES)",
-                    displayDescription: "Language name or code (e.g. Spanish or ES)",
+                    description: "Select one of the 25 most common languages",
+                    displayDescription: "Select one of the 25 most common languages",
                     type: 3,
-                    required: true
+                    required: true,
+                    choices: [
+                        { name: "English", displayName: "English", value: "English" },
+                        { name: "Spanish", displayName: "Spanish", value: "Spanish" },
+                        { name: "French", displayName: "French", value: "French" },
+                        { name: "German", displayName: "German", value: "German" },
+                        { name: "Japanese", displayName: "Japanese", value: "Japanese" },
+                        { name: "Korean", displayName: "Korean", value: "Korean" },
+                        { name: "Chinese", displayName: "Chinese", value: "Chinese" },
+                        { name: "Russian", displayName: "Russian", value: "Russian" },
+                        { name: "Portuguese", displayName: "Portuguese", value: "Portuguese" },
+                        { name: "Italian", displayName: "Italian", value: "Italian" },
+                        { name: "Arabic", displayName: "Arabic", value: "Arabic" },
+                        { name: "Hindi", displayName: "Hindi", value: "Hindi" },
+                        { name: "Turkish", displayName: "Turkish", value: "Turkish" },
+                        { name: "Indonesian", displayName: "Indonesian", value: "Indonesian" },
+                        { name: "Dutch", displayName: "Dutch", value: "Dutch" },
+                        { name: "Polish", displayName: "Polish", value: "Polish" },
+                        { name: "Swedish", displayName: "Swedish", value: "Swedish" },
+                        { name: "Vietnamese", displayName: "Vietnamese", value: "Vietnamese" },
+                        { name: "Greek", displayName: "Greek", value: "Greek" },
+                        { name: "Czech", displayName: "Czech", value: "Czech" },
+                        { name: "Romanian", displayName: "Romanian", value: "Romanian" },
+                        { name: "Hungarian", displayName: "Hungarian", value: "Hungarian" },
+                        { name: "Danish", displayName: "Danish", value: "Danish" },
+                        { name: "Finnish", displayName: "Finnish", value: "Finnish" },
+                        { name: "Ukrainian", displayName: "Ukrainian", value: "Ukrainian" }
+                    ]
                 }
             ],
             execute: async (args, ctx) => {
