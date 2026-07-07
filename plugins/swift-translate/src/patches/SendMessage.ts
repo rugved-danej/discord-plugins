@@ -8,49 +8,60 @@ import { getChannelTargetLanguage } from "../utils/ChannelLanguageStore"
 
 const messageModule = findByProps("sendMessage", "receiveMessage");
 
+const processMessage = async (channelId: string, msg: any) => {
+    if (settings.auto_translate_outgoing && !msg.__swift_translate_translated) {
+        let target_lang = settings.target_lang_outgoing || "en";
+        if (settings.smart_channel_routing) {
+            const smartLang = getChannelTargetLanguage(channelId);
+            if (smartLang) target_lang = smartLang;
+        }
+        
+        try {
+            const { textToTranslate, placeholders } = maskText(msg.content);
+
+            let translate;
+            switch(Number(settings.translator)) {
+                case 0:
+                    translate = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
+                    break;
+                case 1:
+                default:
+                    translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
+                    break;
+            }
+            
+            if (translate && translate.text) {
+                msg.content = unmaskText(translate.text, placeholders);
+                msg.__swift_translate_translated = true;
+            }
+        } catch (e) {
+            console.error("Swift Translate: Failed to auto-translate outgoing message.", e);
+            showToast("Swift Translate: Engine failed to convert outgoing text.", undefined);
+        }
+    }
+};
+
 export default () => {
     try {
         if (!messageModule) return () => {};
         
-        return instead("sendMessage", messageModule, async (args, orig) => {
-            const channelId = args[0];
-            const msg = args[1];
-            
-            if (settings.auto_translate_outgoing && !msg.__swift_translate_translated) {
-                let target_lang = settings.target_lang_outgoing || "en";
-                if (settings.smart_channel_routing) {
-                    const smartLang = getChannelTargetLanguage(channelId);
-                    if (smartLang) target_lang = smartLang;
-                }
-                
-                try {
-                    const { textToTranslate, placeholders } = maskText(msg.content);
-
-                    let translate;
-                    switch(Number(settings.translator)) {
-                        case 0:
-                            translate = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
-                            break;
-                        case 1:
-                        default:
-                            translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
-                            break;
-                    }
-                    
-                    if (translate && translate.text) {
-                        msg.content = unmaskText(translate.text, placeholders);
-                        msg.__swift_translate_translated = true;
-                    }
-                } catch (e) {
-                    console.error("Swift Translate: Failed to auto-translate outgoing message.", e);
-                    showToast("Swift Translate: Engine failed to convert outgoing text.", undefined);
-                }
-            }
-            
+        const unpatchSend = instead("sendMessage", messageModule, async (args, orig) => {
+            await processMessage(args[0], args[1]);
             return orig.apply(messageModule, args);
         });
+
+        const unpatchEdit = messageModule.editMessage ? instead("editMessage", messageModule, async (args, orig) => {
+            // args[0] = channelId, args[1] = messageId, args[2] = msg object
+            await processMessage(args[0], args[2]);
+            return orig.apply(messageModule, args);
+        }) : () => {};
+        
+        return () => {
+            unpatchSend();
+            unpatchEdit();
+        };
     } catch (e) {
-        console.error("Swift Translate: Failed to patch sendMessage.", e);
+        console.error("Swift Translate: Failed to patch outgoing messages.", e);
         return () => {};
     }
 }
