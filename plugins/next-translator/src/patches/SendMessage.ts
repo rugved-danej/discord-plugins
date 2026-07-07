@@ -73,7 +73,7 @@ const processMessage = async (channelId: string, msg: any) => {
                 FluxDispatcher.dispatch({
                     type: "MESSAGE_DELETE",
                     id: fakeId,
-                    channel_id: channelId
+                    channelId: channelId
                 });
             }
         }
