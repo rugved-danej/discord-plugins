@@ -5,8 +5,7 @@ import { Forms } from "@vendetta/ui/components"
 import { showToast } from "@vendetta/ui/toasts"
 import { useProxy } from "@vendetta/storage"
 import { settings } from ".."
-import AIModelPage from "./AIModelPage"
-import AISettingsPage from "./AISettingsPage"
+
 
 
 export default () => {
@@ -48,20 +47,7 @@ export default () => {
                     showToast(`Saved Translator to Google Translate`, getAssetIDByName("check"))
                 }}
             />
-            <FormRow
-                label="AI Translator (Beta)"
-                subLabel="Gemini / OpenAI / Groq Compatible translation."
-                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://www.google.com/s2/favicons?sz=64&domain=openai.com" }} />}
-                trailing={() => <FormRow.Arrow />}
-                onPress={() => {
-                    settings.translator = 2
-                    showToast(`Saved Translator to AI Translator`, getAssetIDByName("check"))
-                    navigation.push("VendettaCustomPage", {
-                        title: "AI Configuration",
-                        render: AISettingsPage
-                    })
-                }}
-            />
+
             <FormRow
                 label="MyMemory"
                 subLabel="Free alternative (500 words/day)"

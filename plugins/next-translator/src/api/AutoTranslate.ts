@@ -6,7 +6,7 @@ import { getLanguageName } from "../lang"
 import { setChannelTargetLanguage } from "../utils/ChannelLanguageStore"
 import DeepL from "./DeepL";
 import GoogleTranslate from "./GoogleTranslate";
-import AI from "./AI";
+
 import Lingva from "./Lingva";
 import MyMemory from "./MyMemory";
 import { translateWithFallback } from "./index";

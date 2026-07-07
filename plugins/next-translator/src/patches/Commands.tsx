@@ -2,7 +2,7 @@ import { registerCommand } from "@vendetta/commands"
 import { showToast } from "@vendetta/ui/toasts"
 import { showConfirmationAlert } from "@vendetta/ui/alerts"
 import { getAssetIDByName } from "@vendetta/ui/assets"
-import { DeepL, GoogleTranslate, AI } from "../api"
+import { DeepL, GoogleTranslate, getEngine } from "../api"
 import { getUserBio } from "../api/Profile"
 import { toggleAutoTranslate, getAutoTranslateChannels } from "../api/AutoTranslate"
 import { settings } from ".."
@@ -59,14 +59,7 @@ export default () => {
                         if (smartLang) target_lang = smartLang;
                     }
 
-                    let res;
-                    if (Number(settings.translator) === 0) {
-                        res = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang);
-                    } else if (Number(settings.translator) === 2) {
-                        res = await AI.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang);
-                    } else {
-                        res = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang);
-                    }
+                    const res = await getEngine(Number(settings.translator)).translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang);
 
                     const translatedText = unmaskText(res.text, placeholders);
 
@@ -114,14 +107,7 @@ export default () => {
                 }
 
                 try {
-                    let res;
-                    if (Number(settings.translator) === 0) {
-                        res = await DeepL.translate(bio, settings.source_lang === "auto" ? undefined : settings.source_lang, settings.target_lang_incoming || "en");
-                    } else if (Number(settings.translator) === 2) {
-                        res = await AI.translate(bio, settings.source_lang === "auto" ? undefined : settings.source_lang, settings.target_lang_incoming || "en");
-                    } else {
-                        res = await GoogleTranslate.translate(bio, settings.source_lang === "auto" ? undefined : settings.source_lang, settings.target_lang_incoming || "en");
-                    }
+                    const res = await getEngine(Number(settings.translator)).translate(bio, settings.source_lang === "auto" ? undefined : settings.source_lang, settings.target_lang_incoming || "en");
 
                     showConfirmationAlert({
                         title: "Translation Results",
@@ -198,8 +184,8 @@ export default () => {
             inputType: 1,
             type: 1,
             execute: async (args, ctx) => {
-                settings.translator = settings.translator === 0 ? 1 : settings.translator === 1 ? 2 : settings.translator === 2 ? 3 : settings.translator === 3 ? 4 : settings.translator === 4 ? 5 : 0;
-                showToast(`Engine Switched: ${settings.translator === 1 ? 'Google Translate' : settings.translator === 2 ? 'AI Translator' : settings.translator === 3 ? 'Lingva Translate' : settings.translator === 4 ? 'MyMemory' : settings.translator === 5 ? 'LibreTranslate' : 'DeepL'}`, getAssetIDByName("Check"));
+                settings.translator = settings.translator === 0 ? 1 : settings.translator === 1 ? 4 : 0;
+                showToast(`Engine Switched: ${settings.translator === 1 ? 'Google Translate' : settings.translator === 4 ? 'MyMemory' : 'DeepL'}`, getAssetIDByName("Check"));
             }
         });
 
@@ -396,70 +382,6 @@ export default () => {
             }
         });
 
-        unregisterTrTemp = registerCommand({
-            name: "tr-temperature",
-            displayName: "tr-temperature",
-            description: "Change the AI Translator Temperature (0.0 to 1.0)",
-            displayDescription: "Change the AI Translator Temperature (0.0 to 1.0)",
-            applicationId: "-1",
-            inputType: 1,
-            type: 1,
-            options: [
-                {
-                    name: "temperature",
-                    displayName: "temperature",
-                    description: "0.0 = Fast/Literal, 0.5 = Balanced, 1.0 = Creative",
-                    displayDescription: "0.0 = Fast/Literal, 0.5 = Balanced, 1.0 = Creative",
-                    type: 3,
-                    required: true,
-                    choices: [
-                        { name: "0.0 (Fast & Literal)", displayName: "0.0 (Fast & Literal)", value: "0.0" },
-                        { name: "0.5 (Balanced)", displayName: "0.5 (Balanced)", value: "0.5" },
-                        { name: "1.0 (Creative)", displayName: "1.0 (Creative)", value: "1.0" }
-                    ]
-                }
-            ],
-            execute: async (args, ctx) => {
-                const temp = parseFloat(args.find(x => x.name === "temperature")?.value || "0");
-                settings.ai_temperature = temp;
-                showToast(`AI Temperature: ${temp}`, getAssetIDByName("Check"));
-            }
-        });
-
-        unregisterTrModel = registerCommand({
-            name: "tr-model",
-            displayName: "tr-model",
-            description: "Change the AI Translation Model",
-            displayDescription: "Change the AI Translation Model",
-            applicationId: "-1",
-            inputType: 1,
-            type: 1,
-            options: [
-                {
-                    name: "model",
-                    displayName: "model",
-                    description: "Select the AI model",
-                    displayDescription: "Select the AI model",
-                    type: 3,
-                    required: true,
-                    choices: [
-                        { name: "Gemini 1.5 Flash", displayName: "Gemini 1.5 Flash", value: "gemini-1.5-flash" },
-                        { name: "Gemini 1.5 Pro", displayName: "Gemini 1.5 Pro", value: "gemini-1.5-pro" },
-                        { name: "Llama 3 8B", displayName: "Llama 3 8B", value: "llama3-8b-8192" },
-                        { name: "Llama 3 70B", displayName: "Llama 3 70B", value: "llama3-70b-8192" },
-                        { name: "Free Proxy (Pollinations)", displayName: "Free Proxy (Pollinations)", value: "pollinations" }
-                    ]
-                }
-            ],
-            execute: async (args, ctx) => {
-                const model = args.find(x => x.name === "model")?.value;
-                if (model) {
-                    settings.ai_model = model;
-                    showToast(`AI Model: ${model}`, getAssetIDByName("Check"));
-                }
-            }
-        });
-
         return () => {
             unregisterTranslate?.();
             unregisterTrBio?.();
@@ -469,8 +391,7 @@ export default () => {
             unregisterTrEngine?.();
             unregisterTrLangIn?.();
             unregisterTrLangOut?.();
-            unregisterTrTemp?.();
-            unregisterTrModel?.();
+
             unregisterTrChannelRule?.();
         }
     } catch (e) {

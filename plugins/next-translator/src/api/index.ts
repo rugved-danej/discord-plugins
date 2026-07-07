@@ -1,14 +1,14 @@
 import DeepL from "./DeepL"
 import GoogleTranslate from "./GoogleTranslate"
 import AutoTranslate from "./AutoTranslate"
-import AI from "./AI"
+
 import MyMemory from "./MyMemory"
 import { settings } from "../index"
 
 const getEngine = (id: number) => {
     switch (id) {
         case 0: return DeepL;
-        case 2: return AI;
+
         case 4: return MyMemory;
         case 1:
         default: return GoogleTranslate;
@@ -80,6 +80,12 @@ const translateWithFallback = async (text: string, source_lang: string | undefin
             for (const fallbackId of fallbackChain) {
                 try {
                     console.log(`Engine ${initialEngineId} rate limited. Falling back to engine ${fallbackId}`);
+                    // @ts-ignore
+                    const { showToast } = require("@vendetta/ui/toasts");
+                    // @ts-ignore
+                    const { getAssetIDByName } = require("@vendetta/ui/assets");
+                    showToast(`Google Rate Limited. Falling back to MyMemory...`, getAssetIDByName("ic_warning_24px"));
+                    
                     const fallbackCacheKey = `${processedText}|${source_lang || 'auto'}|${target_lang}|${fallbackId}`;
                     if (!original && translationCache.has(fallbackCacheKey)) return translationCache.get(fallbackCacheKey);
 
@@ -113,4 +119,4 @@ const translateWithFallback = async (text: string, source_lang: string | undefin
     }
 }
 
-export { DeepL, GoogleTranslate, AutoTranslate, AI, MyMemory, translateWithFallback }
+export { DeepL, GoogleTranslate, AutoTranslate, MyMemory, translateWithFallback, getEngine }

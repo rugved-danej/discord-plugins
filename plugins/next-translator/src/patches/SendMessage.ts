@@ -1,7 +1,7 @@
 import { findByProps, findByStoreName } from "@vendetta/metro"
 import { instead } from "@vendetta/patcher"
 import { settings } from "../index"
-import { DeepL, GoogleTranslate, AI, Lingva, MyMemory, translateWithFallback } from "../api"
+import { DeepL, GoogleTranslate, MyMemory, translateWithFallback } from "../api"
 import { showToast } from "@vendetta/ui/toasts"
 import { maskText, unmaskText } from "../utils/placeholder"
 import { getChannelTargetLanguage } from "../utils/ChannelLanguageStore"
