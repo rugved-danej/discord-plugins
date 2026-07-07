@@ -24,6 +24,7 @@ export default () => {
             {
                 Object.entries(DeepLLangs).filter(([key, value]) => key.toLowerCase().includes(query.toLowerCase())).map(([key, value]) => <FormRow
                     label={key}
+                    leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://img.icons8.com/color/96/language.png" }} />}
                     trailing={settings.target_lang_incoming === value ? <FormRow.Icon source={getAssetIDByName("check")} /> : <FormRow.Arrow />}
                     onPress={() => {
                         settings.target_lang_incoming = value
@@ -44,6 +45,7 @@ export default () => {
             {
                 Object.entries(GoogleTranslateLangs).filter(([key, value]) => key.toLowerCase().includes(query.toLowerCase())).map(([key, value]) => <FormRow
                     label={key}
+                    leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://img.icons8.com/color/96/language.png" }} />}
                     trailing={settings.target_lang_incoming === value ? <FormRow.Icon source={getAssetIDByName("check")} /> : <FormRow.Arrow />}
                     onPress={() => {
                         settings.target_lang_incoming = value

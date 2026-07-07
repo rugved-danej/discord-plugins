@@ -47,7 +47,7 @@ export default () => {
         <ScrollView style={{ flex: 1, backgroundColor: semanticColors.BACKGROUND_MOBILE_PRIMARY }}>
             <FormRow
                 label="Translation Engine"
-                subLabel={settings.translator ? "Google Translate (Fast, Free)" : "DeepL (Highly Accurate)"}
+                subLabel={settings.translator === 1 ? "Google Translate (Fast, Free)" : "DeepL (Highly Accurate)"}
                 leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://img.icons8.com/color/96/bot.png" }} />}
                 trailing={() => <FormRow.Arrow />}
                 onPress={() => navigation.push("VendettaCustomPage", {

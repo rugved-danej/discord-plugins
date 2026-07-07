@@ -1,20 +1,23 @@
 import { getAssetIDByName } from "@vendetta/ui/assets"
-import { React, ReactNative } from "@vendetta/metro/common"
+import { React, ReactNative, NavigationNative } from "@vendetta/metro/common"
 import { Forms } from "@vendetta/ui/components"
 import { showToast } from "@vendetta/ui/toasts"
 import { useProxy } from "@vendetta/storage"
 import { settings } from ".."
+import AIModelPage from "./AIModelPage"
 
 
 export default () => {
     const { FormRow, FormInput } = Forms
     const { ScrollView, View, Text } = ReactNative
+    const navigation = NavigationNative.useNavigation()
     useProxy(settings)
     return (
     <ScrollView style={{ flex: 1 }}>
             <FormRow
                 label="DeepL"
-                subLabel="High-accuracy AI translation."
+                subLabel="High-accuracy translation."
+                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://deepl.com&size=128" }} />}
                 trailing={<FormRow.Arrow />}
                 onPress={() => {
                     if (settings.translator == 0) return
@@ -34,6 +37,8 @@ export default () => {
             )}
             <FormRow
                 label="Google Translate"
+                subLabel="Fast, free translation."
+                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://translate.google.com&size=128" }} />}
                 trailing={() => <FormRow.Arrow />}
                 onPress={() => {
                     if (settings.translator == 1) return

@@ -1,19 +1,20 @@
 import { findByProps } from "@vendetta/metro"
 import { instead } from "@vendetta/patcher"
 import { settings } from "../index"
-import { DeepL, GoogleTranslate } from "../api"
+import { DeepL, GoogleTranslate, AI } from "../api"
 import { showToast } from "@vendetta/ui/toasts"
 import { maskText, unmaskText } from "../utils/placeholder"
 import { getChannelTargetLanguage } from "../utils/ChannelLanguageStore"
 import { FluxDispatcher } from "@vendetta/metro/common"
 import { findByStoreName } from "@vendetta/metro"
+import { reportError } from "../utils/telemetry"
 
 let UserStore: any;
 
 const messageModule = findByProps("sendMessage", "receiveMessage");
 
 const processMessage = async (channelId: string, msg: any) => {
-    if (settings.auto_translate_outgoing && !msg.__swift_translate_translated) {
+    if (settings.auto_translate_outgoing && !msg.__next_translator_translated) {
         let target_lang = settings.target_lang_outgoing || "en";
         if (settings.smart_channel_routing) {
             const smartLang = getChannelTargetLanguage(channelId);
@@ -55,6 +56,11 @@ const processMessage = async (channelId: string, msg: any) => {
                         translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
                     }
                     break;
+                case 2:
+                    const channelMessages = findByStoreName("MessageStore")?.getMessages(channelId)?.toArray() || [];
+                    const contextMessages = channelMessages.slice(-3).map((m: any) => ({ author: m.author?.username || "Unknown", content: m.content })).filter((m: any) => m.content);
+                    translate = await AI.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false, contextMessages);
+                    break;
                 case 1:
                 default:
                     translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, false);
@@ -63,11 +69,12 @@ const processMessage = async (channelId: string, msg: any) => {
             
             if (translate && translate.text) {
                 msg.content = unmaskText(translate.text, placeholders);
-                msg.__swift_translate_translated = true;
+                msg.__next_translator_translated = true;
             }
         } catch (e) {
             console.error("Next Translator: Failed to auto-translate outgoing message.", e);
-            showToast("Next Translator: Engine failed to convert outgoing text.", undefined);
+            showToast(`Error: ${e instanceof Error ? e.message : String(e)}`, undefined);
+            reportError("SendMessage - AutoOutgoing", e);
         } finally {
             if (fakeId) {
                 FluxDispatcher.dispatch({

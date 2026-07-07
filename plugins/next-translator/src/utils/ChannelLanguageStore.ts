@@ -1,10 +1,10 @@
-const channelLanguages = new Map<string, string>();
+import { settings } from "../index"
 
 export function setChannelTargetLanguage(channelId: string, langCode: string) {
     if (!langCode || langCode.toLowerCase() === "auto") return;
-    channelLanguages.set(channelId, langCode.toUpperCase());
+    settings.channel_targets = { ...settings.channel_targets, [channelId]: langCode.toUpperCase() };
 }
 
 export function getChannelTargetLanguage(channelId: string): string | undefined {
-    return channelLanguages.get(channelId);
+    return settings.channel_targets?.[channelId];
 }

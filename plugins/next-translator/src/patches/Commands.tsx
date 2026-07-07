@@ -2,14 +2,15 @@ import { registerCommand } from "@vendetta/commands"
 import { showToast } from "@vendetta/ui/toasts"
 import { showConfirmationAlert } from "@vendetta/ui/alerts"
 import { getAssetIDByName } from "@vendetta/ui/assets"
-import { DeepL, GoogleTranslate } from "../api"
+import { DeepL, GoogleTranslate, AI } from "../api"
 import { getUserBio } from "../api/Profile"
 import { toggleAutoTranslate, getAutoTranslateChannels } from "../api/AutoTranslate"
 import { settings } from ".."
 import { ButtonColors } from "@vendetta/ui/components"
 import { maskText, unmaskText } from "../utils/placeholder"
-import { getChannelTargetLanguage } from "../utils/ChannelLanguageStore"
+import { getChannelTargetLanguage, setChannelTargetLanguage } from "../utils/ChannelLanguageStore"
 import { DeepLLangs, GoogleTranslateLangs } from "../lang"
+import { reportError } from "../utils/telemetry"
 
 let unregisterTranslate: () => void;
 let unregisterTrBio: () => void;
@@ -25,8 +26,8 @@ export default () => {
         unregisterTranslate = registerCommand({
             name: "translate",
             displayName: "translate",
-            description: "[Next Translator] Instantly convert any text into your preferred language",
-            displayDescription: "[Next Translator] Instantly convert any text into your preferred language",
+            description: "Instantly convert any text into your preferred language",
+            displayDescription: "Instantly convert any text into your preferred language",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -58,6 +59,8 @@ export default () => {
                     let res;
                     if (Number(settings.translator) === 0) {
                         res = await DeepL.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang);
+                    } else if (Number(settings.translator) === 2) {
+                        res = await AI.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang);
                     } else {
                         res = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang);
                     }
@@ -71,9 +74,10 @@ export default () => {
                     };
                 } catch (e) {
                     console.error("Next Translator Translation Error", e);
+                    reportError("Commands - translate", e);
                     return {
-                        content: "Next Translator encountered an error while processing your request."
-                    }
+                        content: "Encountered an error while processing your request."
+                    };
                 }
             }
         });
@@ -81,8 +85,8 @@ export default () => {
         unregisterTrBio = registerCommand({
             name: "tr-bio",
             displayName: "tr-bio",
-            description: "[Next Translator] Fetch and convert a user's About Me section",
-            displayDescription: "[Next Translator] Fetch and convert a user's About Me section",
+            description: "Fetch and convert a user's About Me section",
+            displayDescription: "Fetch and convert a user's About Me section",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -110,19 +114,22 @@ export default () => {
                     let res;
                     if (Number(settings.translator) === 0) {
                         res = await DeepL.translate(bio, settings.source_lang === "auto" ? undefined : settings.source_lang, settings.target_lang_incoming || "en");
+                    } else if (Number(settings.translator) === 2) {
+                        res = await AI.translate(bio, settings.source_lang === "auto" ? undefined : settings.source_lang, settings.target_lang_incoming || "en");
                     } else {
                         res = await GoogleTranslate.translate(bio, settings.source_lang === "auto" ? undefined : settings.source_lang, settings.target_lang_incoming || "en");
                     }
 
                     showConfirmationAlert({
-                        title: "Next Translator Results",
+                        title: "Translation Results",
                         content: `${res.text}\n\`[${res.source_lang} ➔ ${res.target_lang}]\``,
                         confirmText: "Close",
                         confirmColor: "brand" as ButtonColors
                     });
                 } catch (e) {
                     console.error("Next Translator Bio Error", e);
-                    showToast("Swift API failed to fetch bio.", getAssetIDByName("Small"));
+                    showToast(`Error: ${e instanceof Error ? e.message : String(e)}`, getAssetIDByName("Small"));
+                    reportError("Commands - tr-bio", e);
                 }
             }
         });
@@ -130,8 +137,8 @@ export default () => {
         unregisterTrAuto = registerCommand({
             name: "tr-auto",
             displayName: "tr-auto",
-            description: "[Next Translator] Toggle live auto-translation for all incoming messages here",
-            displayDescription: "[Next Translator] Toggle live auto-translation for all incoming messages here",
+            description: "Toggle live auto-translation for all incoming messages here",
+            displayDescription: "Toggle live auto-translation for all incoming messages here",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -144,9 +151,9 @@ export default () => {
 
                 const isActive = toggleAutoTranslate(channelId);
                 if (isActive) {
-                    showToast("Swift Live Translation: ACTIVE", getAssetIDByName("Check"));
+                    showToast("Live Translation: ACTIVE", getAssetIDByName("Check"));
                 } else {
-                    showToast("Swift Live Translation: PAUSED", getAssetIDByName("Small"));
+                    showToast("Live Translation: PAUSED", getAssetIDByName("Small"));
                 }
             }
         });
@@ -154,8 +161,8 @@ export default () => {
         unregisterTrImmersive = registerCommand({
             name: "tr-immersive",
             displayName: "tr-immersive",
-            description: "[Next Translator] Toggle Immersive Dual-Text mode",
-            displayDescription: "[Next Translator] Toggle Immersive Dual-Text mode",
+            description: "Toggle Immersive Dual-Text mode",
+            displayDescription: "Toggle Immersive Dual-Text mode",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -168,8 +175,8 @@ export default () => {
         unregisterTrOutgoing = registerCommand({
             name: "tr-outgoing",
             displayName: "tr-outgoing",
-            description: "[Next Translator] Toggle auto-translating all your outgoing messages",
-            displayDescription: "[Next Translator] Toggle auto-translating all your outgoing messages",
+            description: "Toggle auto-translating all your outgoing messages",
+            displayDescription: "Toggle auto-translating all your outgoing messages",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -182,20 +189,20 @@ export default () => {
         unregisterTrEngine = registerCommand({
             name: "tr-engine",
             displayName: "tr-engine",
-            description: "[Next Translator] Switch between Google Translate and DeepL",
-            displayDescription: "[Next Translator] Switch between Google Translate and DeepL",
+            description: "Switch between Google Translate and DeepL",
+            displayDescription: "Switch between Google Translate and DeepL",
             applicationId: "-1",
             inputType: 1,
             type: 1,
             execute: async (args, ctx) => {
-                settings.translator = settings.translator === 1 ? 0 : 1;
+                settings.translator = settings.translator === 0 ? 1 : 0;
                 showToast(`Engine Switched: ${settings.translator === 1 ? 'Google Translate' : 'DeepL'}`, getAssetIDByName("Check"));
             }
         });
 
         const resolveLangCode = (query: string) => {
             const q = query.toLowerCase().trim();
-            const map = Number(settings.translator) === 0 ? DeepLLangs : GoogleTranslateLangs;
+            const map = Number(settings.translator) === 0 ? DeepLLangs : GoogleTranslateLangs; // AI uses GoogleTranslateLangs basically
             for (const [name, code] of Object.entries(map)) {
                 if (name.toLowerCase().startsWith(q) || code.toLowerCase() === q) {
                     return { code, name };
@@ -207,8 +214,8 @@ export default () => {
         unregisterTrLangIn = registerCommand({
             name: "tr-lang-in",
             displayName: "tr-lang-in",
-            description: "[Next Translator] Set your target language for incoming translated messages",
-            displayDescription: "[Next Translator] Set your target language for incoming translated messages",
+            description: "Set your target language for incoming translated messages",
+            displayDescription: "Set your target language for incoming translated messages",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -278,8 +285,8 @@ export default () => {
         unregisterTrLangOut = registerCommand({
             name: "tr-lang-out",
             displayName: "tr-lang-out",
-            description: "[Next Translator] Set your target language for outgoing translated messages",
-            displayDescription: "[Next Translator] Set your target language for outgoing translated messages",
+            description: "Set your target language for outgoing translated messages",
+            displayDescription: "Set your target language for outgoing translated messages",
             applicationId: "-1",
             inputType: 1,
             type: 1,
@@ -338,8 +345,13 @@ export default () => {
                 }
                 const match = resolveLangCode(query);
                 if (match) {
-                    settings.target_lang_outgoing = match.code;
-                    showToast(`Outgoing Language: ${match.name}`, getAssetIDByName("Check"));
+                    if (settings.smart_channel_routing && ctx.channel?.id) {
+                        setChannelTargetLanguage(ctx.channel.id, match.code);
+                        showToast(`Smart Channel Outgoing: ${match.name}`, getAssetIDByName("Check"));
+                    } else {
+                        settings.target_lang_outgoing = match.code;
+                        showToast(`Outgoing Language: ${match.name}`, getAssetIDByName("Check"));
+                    }
                 } else {
                     showToast(`Language not found.`, getAssetIDByName("Small"));
                 }

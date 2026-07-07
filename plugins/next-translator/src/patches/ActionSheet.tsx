@@ -10,10 +10,11 @@ import { settings } from ".."
 import { getLanguageName } from "../lang"
 import { showToast } from "@vendetta/ui/toasts"
 import { showConfirmationAlert } from "@vendetta/ui/alerts"
-import { DeepL, GoogleTranslate } from "../api"
+import { DeepL, GoogleTranslate, AI } from "../api"
 import { logger } from "@vendetta"
 import { maskText, unmaskText } from "../utils/placeholder"
 import { setChannelTargetLanguage } from "../utils/ChannelLanguageStore"
+import { reportError } from "../utils/telemetry"
 
 let LazyActionSheet: any
 const ActionSheetComponent = findByProps("ActionSheet")?.ActionSheet ?? find(m => m?.render?.name === "ActionSheet")
@@ -95,6 +96,19 @@ export default () => {
                                         translate = await GoogleTranslate.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, !isTranslated)
                                     }
                                     break
+                                case 2:
+                                    console.log("Translating with AI: ", textToTranslate)
+                                    const channelMessages = MessageStore.getMessages((originalMessage || message).channel_id)?.toArray() || [];
+                                    const msgIndex = channelMessages.findIndex((m: any) => m.id === messageId);
+                                    const contextMessages = [];
+                                    if (msgIndex !== -1) {
+                                        const prevMsgs = channelMessages.slice(Math.max(0, msgIndex - 3), msgIndex);
+                                        for (const m of prevMsgs) {
+                                            if (m.content) contextMessages.push({ author: m.author?.username || "Unknown", content: m.content });
+                                        }
+                                    }
+                                    translate = await AI.translate(textToTranslate, settings.source_lang === "auto" ? undefined : settings.source_lang, target_lang, !isTranslated, contextMessages)
+                                    break
                                 case 1:
                                 default:
                                     console.log("Translating with GoogleTranslate: ", textToTranslate)
@@ -125,7 +139,7 @@ export default () => {
 
                             if (!originalMessage || isSearchView) {
                                 showConfirmationAlert({
-                                    title: "Swift Translation",
+                                    title: "Translation",
                                     content: finalContent,
                                     confirmText: "Close"
                                 })
@@ -153,6 +167,7 @@ export default () => {
                         } catch (e) {
                             showToast(String(e), getAssetIDByName("Small"))
                             logger.error(e)
+                            reportError("ActionSheet - Translate Message", e)
                         }
                     }
 
@@ -203,7 +218,7 @@ export default () => {
                                         if (match) textToCopy = match[1];
                                     }
                                     ReactNative.Clipboard.setString(textToCopy);
-                                    showToast("Swift Text Copied", getAssetIDByName("check"));
+                                    showToast("Text Copied", getAssetIDByName("check"));
                                     if (hideActionSheet) hideActionSheet()
                                     else LazyActionSheet.hideActionSheet()
                                 }}
