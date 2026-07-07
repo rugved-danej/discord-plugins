@@ -26,16 +26,15 @@ const processMessage = async (channelId: string, msg: any) => {
             const user = UserStore?.getCurrentUser?.();
             if (user) {
                 fakeId = "next-translator-" + Date.now();
-                FluxDispatcher.dispatch({
-                    type: "MESSAGE_CREATE",
-                    message: {
-                        id: fakeId,
-                        channel_id: channelId,
-                        content: `*Translating: "${msg.content.slice(0, 50)}${msg.content.length > 50 ? "..." : ""}"* ⏳`,
-                        author: user,
-                        state: "SENDING",
-                        timestamp: new Date().toISOString()
-                    }
+                messageModule.receiveMessage(channelId, {
+                    id: fakeId,
+                    channel_id: channelId,
+                    content: `*Translating: "${msg.content.slice(0, 50)}${msg.content.length > 50 ? "..." : ""}"* ⏳`,
+                    author: user,
+                    state: "SENDING",
+                    flags: 64, // Ephemeral, local only
+                    type: 0,
+                    timestamp: new Date().toISOString()
                 });
             }
         } catch (e) {
