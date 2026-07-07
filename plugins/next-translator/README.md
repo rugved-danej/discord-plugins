@@ -19,8 +19,8 @@ Next Translator splits your language settings into two separate targets:
 *   **Incoming Messages:** Translate what others say to you into your native language via the Action Sheet popup.
 *   **Outgoing Messages:** Automatically translate everything you type into their language before the server even sees it.
 
-### 2. Live Auto-Translate & Ghost Messages 👻
-When typing outgoing messages, Next Translator provides an **Optimistic UI Ghost Message** in your chat. You instantly see a grayed out `Translating... ⏳` indicator while the API runs, meaning you never feel like the app is lagging. 
+### 2. Live Auto-Translate 👻
+When typing outgoing messages, Next Translator hooks into your payload and seamlessly translates it before Discord even registers it. 
 
 Plus, use the `/tr-auto` command to turn on **Live Incoming Auto-Translate** for a specific channel! Every new message sent by other users will be translated on your screen the moment it arrives.
 
@@ -60,7 +60,7 @@ Control the entire plugin without opening the settings menu using our custom `/t
 
 Next Translator operates by injecting proxy traps into Discord's core `MessageDispatch` and `ActionSheet` React Native modules.
 
-When you hit "Send" with **Auto-Translate Outgoing** enabled, the plugin hooks into the payload *before* it leaves your device. It scans the text using the Regex Engine, replaces protected terms with alphanumeric metadata tags (e.g., `__PH0__`), displays a temporary UI Ghost Message in your client, fires the sanitized text to the Google/DeepL API, and then surgically replaces the metadata tags with the original protected terms before letting Discord dispatch the message to the socket.
+When you hit "Send" with **Auto-Translate Outgoing** enabled, the plugin hooks into the payload *before* it leaves your device. It scans the text using the Regex Engine, replaces protected terms with alphanumeric metadata tags (e.g., `__PH0__`), fires the sanitized text to the Google/DeepL API, and then surgically replaces the metadata tags with the original protected terms before letting Discord dispatch the message to the socket.
 
 ---
 
