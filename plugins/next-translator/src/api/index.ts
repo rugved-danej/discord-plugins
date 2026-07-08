@@ -1,14 +1,13 @@
 import DeepL from "./DeepL"
 import GoogleTranslate from "./GoogleTranslate"
-import AutoTranslate from "./AutoTranslate"
-
 import MyMemory from "./MyMemory"
+import Bing from "./Bing"
 import { settings } from "../index"
 
 const getEngine = (id: number) => {
     switch (id) {
         case 0: return DeepL;
-
+        case 5: return Bing;
         case 4: return MyMemory;
         case 1:
         default: return GoogleTranslate;
@@ -76,7 +75,7 @@ const translateWithFallback = async (text: string, source_lang: string | undefin
         return result;
     } catch (e: any) {
         if (settings.auto_engine_fallback && e.message && (e.message.includes("429") || e.message.includes("Rate Limit"))) {
-            const fallbackChain = [1, 4].filter(id => id !== initialEngineId && id !== 2 && id !== 0);
+            const fallbackChain = [1, 5, 4].filter(id => id !== initialEngineId && id !== 0);
             for (const fallbackId of fallbackChain) {
                 try {
                     console.log(`Engine ${initialEngineId} rate limited. Falling back to engine ${fallbackId}`);
@@ -119,4 +118,4 @@ const translateWithFallback = async (text: string, source_lang: string | undefin
     }
 }
 
-export { DeepL, GoogleTranslate, AutoTranslate, MyMemory, translateWithFallback, getEngine }
+export { DeepL, GoogleTranslate, AutoTranslate, MyMemory, Bing, translateWithFallback, getEngine }

@@ -47,7 +47,17 @@ export default () => {
                     showToast(`Saved Translator to Google Translate`, getAssetIDByName("check"))
                 }}
             />
-
+            <FormRow
+                label="Bing Translator"
+                subLabel="Microsoft's powerful engine (Often beats Google)"
+                leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://www.google.com/s2/favicons?sz=64&domain=bing.com" }} />}
+                trailing={() => <FormRow.Arrow />}
+                onPress={() => {
+                    if (settings.translator == 5) return
+                    settings.translator = 5
+                    showToast(`Saved Translator to Bing`, getAssetIDByName("check"))
+                }}
+            />
             <FormRow
                 label="MyMemory"
                 subLabel="Free alternative (500 words/day)"

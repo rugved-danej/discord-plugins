@@ -59,6 +59,7 @@ export default () => {
             case 0: return "https://www.google.com/s2/favicons?sz=64&domain=deepl.com";
             case 2: return "https://www.google.com/s2/favicons?sz=64&domain=openai.com";
             case 4: return "https://icon.horse/icon/mymemory.translated.net";
+            case 5: return "https://www.google.com/s2/favicons?sz=64&domain=bing.com";
             case 1:
             default: return "https://www.google.com/s2/favicons?sz=64&domain=translate.google.com";
         }
@@ -70,7 +71,7 @@ export default () => {
         <ScrollView key={refreshKey} style={{ flex: 1, backgroundColor: semanticColors.BACKGROUND_MOBILE_PRIMARY }}>
             <FormRow
                 label="Translation Engine"
-                subLabel={settings.translator === 1 ? "Google Translate" : settings.translator === 4 ? "MyMemory" : "DeepL"}
+                subLabel={settings.translator === 1 ? "Google Translate" : settings.translator === 5 ? "Bing Translator" : settings.translator === 4 ? "MyMemory" : "DeepL"}
                 leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4, tintColor: typeof engineIcon === "number" ? semanticColors.INTERACTIVE_NORMAL : undefined }} source={typeof engineIcon === "number" ? engineIcon : { uri: engineIcon }} />}
                 trailing={() => <FormRow.Arrow />}
                 onPress={() => navigation.push("VendettaCustomPage", {

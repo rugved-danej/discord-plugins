@@ -184,8 +184,8 @@ export default () => {
             inputType: 1,
             type: 1,
             execute: async (args, ctx) => {
-                settings.translator = settings.translator === 0 ? 1 : settings.translator === 1 ? 4 : 0;
-                showToast(`Engine Switched: ${settings.translator === 1 ? 'Google Translate' : settings.translator === 4 ? 'MyMemory' : 'DeepL'}`, getAssetIDByName("Check"));
+                settings.translator = settings.translator === 0 ? 1 : settings.translator === 1 ? 5 : settings.translator === 5 ? 4 : 0;
+                showToast(`Engine Switched: ${settings.translator === 1 ? 'Google Translate' : settings.translator === 5 ? 'Bing Translator' : settings.translator === 4 ? 'MyMemory' : 'DeepL'}`, getAssetIDByName("Check"));
             }
         });
 

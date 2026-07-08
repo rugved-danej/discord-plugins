@@ -1,4 +1,5 @@
 import { storage } from "@vendetta/plugin"
+import { findByStoreName } from "@vendetta/metro"
 import patchActionSheet from "./patches/ActionSheet"
 import patchCommands from "./patches/Commands"
 import patchSendMessage from "./patches/SendMessage"
@@ -15,6 +16,8 @@ export const settings: {
     smart_channel_routing?: boolean
     custom_dictionary?: string[]
     deepl_api_key?: string
+    custom_lingva_url?: string
+    custom_libre_url?: string
     ai_api_key?: string
     ai_model?: string
     ai_system_prompt?: string
