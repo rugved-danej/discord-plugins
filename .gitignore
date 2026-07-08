@@ -34,3 +34,7 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Ignored Local Plugins
+plugins/auto-dismiss-ephemeral/
+dist/auto-dismiss-ephemeral/
