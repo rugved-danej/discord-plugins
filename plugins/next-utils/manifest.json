@@ -1,0 +1,15 @@
+{
+    "name": "Next Utils",
+    "description": "A powerful collection of Discord utilities, featuring highly customizable Auto-Dismiss for Ephemeral messages.",
+    "authors": [
+        {
+            "name": "Rugved",
+            "id": "1456298862997409945"
+        }
+    ],
+    "main": "src/index.ts",
+    "version": "1.0.0",
+    "vendetta": {
+        "icon": "ic_cog_24px"
+    }
+}

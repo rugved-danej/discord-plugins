@@ -27,7 +27,7 @@ const translate = async (text: string, source_lang: string = "auto", target_lang
             return { source_lang: data.translations[0].detected_source_language, text: data.translations[0].text };
         }
 
-        const data: DeepLResponse = await (await fetch(API_URL, {
+        const response = await fetch(API_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -37,8 +37,22 @@ const translate = async (text: string, source_lang: string = "auto", target_lang
                 source_lang,
                 target_lang
             })
-        })).json()
-        if (data.code !== 200) throw Error(`Failed to translate text from DeepL Proxy: ${data.message}`)
+        });
+        
+        if (response.status === 429) {
+            throw Error("Rate Limit: DeepL Proxy Too Many Requests");
+        }
+        
+        let data: any = {};
+        try {
+            data = await response.json();
+        } catch(e) {
+            if (!response.ok) throw Error(`Rate Limit: DeepL Proxy failed with status ${response.status}`);
+        }
+
+        if (data.code !== 200) {
+            throw Error(`Rate Limit: Failed to translate text from DeepL Proxy: ${data.message || data.error || response.status}`);
+        }
         return { source_lang: data.sourceLang || source_lang, text: data.data }
     } catch (e) {
         throw Error(`Failed to fetch from DeepL: ${e}`)
