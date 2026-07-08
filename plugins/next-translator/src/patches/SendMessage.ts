@@ -3,6 +3,7 @@ import { instead } from "@vendetta/patcher"
 import { settings } from "../index"
 import { DeepL, GoogleTranslate, MyMemory, translateWithFallback } from "../api"
 import { showToast } from "@vendetta/ui/toasts"
+import { showConfirmationAlert } from "@vendetta/ui/alerts"
 import { maskText, unmaskText } from "../utils/placeholder"
 import { getChannelTargetLanguage } from "../utils/ChannelLanguageStore"
 import { FluxDispatcher } from "@vendetta/metro/common"
@@ -12,7 +13,7 @@ let UserStore: any;
 
 const messageModule = findByProps("sendMessage", "receiveMessage");
 
-const processMessage = async (channelId: string, msg: any) => {
+const processMessage = async (channelId: string, msg: any, orig: any, args: any) => {
     if (settings.auto_translate_outgoing && !msg.__next_translator_translated) {
         let target_lang = settings.channel_language_rules?.[channelId] || settings.target_lang_outgoing || "en";
         if (settings.smart_channel_routing) {
@@ -51,6 +52,17 @@ const processMessage = async (channelId: string, msg: any) => {
                 if (translate && translate.text) {
                     msg.content = unmaskText(translate.text, placeholders);
                     msg.__next_translator_translated = true;
+                    
+                    if (fakeId) {
+                        FluxDispatcher.dispatch({
+                            type: "MESSAGE_DELETE",
+                            id: fakeId,
+                            channelId: channelId
+                        });
+                        fakeId = null; // Prevent finally from running again
+                    }
+
+
                 }
             } catch (e) {
                 throw e;
@@ -69,6 +81,9 @@ const processMessage = async (channelId: string, msg: any) => {
             }
         }
     }
+    
+    // Normal fallback if preview isn't triggered
+    orig.apply(messageModule, args);
 };
 
 export default () => {
@@ -76,14 +91,12 @@ export default () => {
         if (!messageModule) return () => {};
         
         const unpatchSend = instead("sendMessage", messageModule, async (args, orig) => {
-            await processMessage(args[0], args[1]);
-            return orig.apply(messageModule, args);
+            await processMessage(args[0], args[1], orig, args);
         });
 
         const unpatchEdit = messageModule.editMessage ? instead("editMessage", messageModule, async (args, orig) => {
             // args[0] = channelId, args[1] = messageId, args[2] = msg object
-            await processMessage(args[0], args[2]);
-            return orig.apply(messageModule, args);
+            await processMessage(args[0], args[2], orig, args);
         }) : () => {};
         
         return () => {

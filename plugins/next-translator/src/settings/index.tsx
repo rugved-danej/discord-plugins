@@ -134,6 +134,30 @@ export default () => {
                 }}
             />
 
+            {settings.auto_translate_outgoing && (
+                <FormSwitchRow
+                    label="Show Translate Preview Button"
+                    subLabel="Replaces the Gift Nitro button with a translation preview button."
+                    leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://img.icons8.com/color/96/visible.png" }} />}
+                    value={settings.show_preview_button}
+                    onValueChange={(val: boolean) => {
+                        settings.show_preview_button = val
+                    }}
+                />
+            )}
+
+            {settings.auto_translate_outgoing && settings.show_preview_button && (
+                <FormSwitchRow
+                    label="Verify Outgoing Translation"
+                    subLabel="Double-checks your translation by translating it back to your incoming language so you can verify accuracy."
+                    leading={<ReactNative.Image style={{ width: 32, height: 32, borderRadius: 8, marginRight: 4 }} source={{ uri: "https://img.icons8.com/color/96/verified-account.png" }} />}
+                    value={settings.verify_outgoing}
+                    onValueChange={(val: boolean) => {
+                        settings.verify_outgoing = val
+                    }}
+                />
+            )}
+
             <FormSwitchRow
                 label="Smart Channel Routing"
                 subLabel="Automatically switches your outgoing language to match the language of incoming messages you translate."
@@ -175,7 +199,6 @@ export default () => {
                     settings.immersive_enabled = v
                 }}
             />
-
 
         </ScrollView>
     )

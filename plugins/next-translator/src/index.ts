@@ -3,6 +3,7 @@ import { findByStoreName } from "@vendetta/metro"
 import patchActionSheet from "./patches/ActionSheet"
 import patchCommands from "./patches/Commands"
 import patchSendMessage from "./patches/SendMessage"
+import patchChatButtons from "./patches/ChatButtons"
 import initAutoTranslate from "./api/AutoTranslate"
 import Settings from "./settings"
 
@@ -13,6 +14,8 @@ export const settings: {
     translator?: number
     immersive_enabled?: boolean
     auto_translate_outgoing?: boolean
+    show_preview_button?: boolean
+    verify_outgoing?: boolean
     smart_channel_routing?: boolean
     custom_dictionary?: string[]
     deepl_api_key?: string
@@ -38,6 +41,8 @@ try {
     settings.translator ??= 1
     settings.immersive_enabled ??= true
     settings.auto_translate_outgoing ??= false
+    settings.show_preview_button ??= true
+    settings.verify_outgoing ??= false
     settings.auto_engine_fallback ??= true
     settings.smart_channel_routing ??= false
     settings.custom_dictionary ??= []
@@ -88,6 +93,7 @@ export default {
             patchActionSheet(),
             patchCommands(),
             patchSendMessage(),
+            patchChatButtons(),
             initAutoTranslate()
         ]
     },
