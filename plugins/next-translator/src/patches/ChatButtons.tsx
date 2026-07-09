@@ -21,14 +21,13 @@ import { stylesheet } from "@vendetta/metro/common";
 
 const styles = stylesheet.createThemedStyleSheet({
     button: {
-        width: 34,
-        height: 34,
-        borderRadius: 17,
-        backgroundColor: semanticColors.BACKGROUND_SECONDARY_ALT,
+        width: 32,
+        height: 32,
         justifyContent: "center",
         alignItems: "center",
         alignSelf: "center",
-        marginHorizontal: 4
+        marginLeft: 2,
+        marginRight: 12
     }
 });
 
@@ -115,7 +114,7 @@ function TranslateAction() {
             style={styles.button}
         >
             <Image 
-                style={{ width: 20, height: 20 }} 
+                style={{ width: 22, height: 22 }} 
                 source={{ uri: "https://img.icons8.com/ios-filled/50/b5bac1/translation.png" }} 
                 resizeMode="contain"
             />
@@ -128,6 +127,9 @@ export default () => {
     try {
         const ChatInputActions = find(m => m?.type?.displayName === "ChatInputActions") || findByName("ChatInputActions");
         const actionsTarget = ChatInputActions?.type || ChatInputActions;
+        
+        const ChatInputSendButton = find(m => m?.type?.displayName === "ChatInputSendButton") || findByName("ChatInputSendButton");
+        const sendTarget = ChatInputSendButton?.type || ChatInputSendButton;
 
         if (actionsTarget) {
             unpatches.push(
@@ -138,16 +140,18 @@ export default () => {
                     }
                 })
             );
+        }
 
+        if (sendTarget) {
             unpatches.push(
-                after("render", actionsTarget, (args, ret) => {
+                after("render", sendTarget, (args, ret) => {
                     if (!settings.auto_translate_outgoing || !settings.show_preview_button) return ret;
                     
                     return (
-                        <React.Fragment>
-                            {ret}
+                        <ReactNative.View style={{ flexDirection: "row", alignItems: "center" }}>
                             <TranslateAction />
-                        </React.Fragment>
+                            {ret}
+                        </ReactNative.View>
                     );
                 })
             );
