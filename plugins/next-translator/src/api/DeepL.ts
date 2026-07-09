@@ -1,8 +1,12 @@
 import { DeepLResponse } from "../type"
 import { settings } from "../index"
 
-// TODO: Change API link when it'll be down
-const API_URL = "https://deeplx.1stg.me/translate"
+const PROXIES = [
+    "https://api.deeplx.org/translate",
+    "https://deeplx.1stg.me/translate",
+    "https://deepl.wuyongx.eu.org/translate",
+    "https://api.owo.network/translate"
+];
 
 const translate = async (text: string, source_lang: string = "auto", target_lang: string, original: boolean = false) => {
     try {
@@ -27,33 +31,34 @@ const translate = async (text: string, source_lang: string = "auto", target_lang
             return { source_lang: data.translations[0].detected_source_language, text: data.translations[0].text };
         }
 
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                text,
-                source_lang,
-                target_lang
-            })
-        });
-        
-        if (response.status === 429) {
-            throw Error("Rate Limit: DeepL Proxy Too Many Requests");
-        }
-        
-        let data: any = {};
-        try {
-            data = await response.json();
-        } catch(e) {
-            if (!response.ok) throw Error(`Rate Limit: DeepL Proxy failed with status ${response.status}`);
-        }
+        let lastError = "";
+        for (const proxyUrl of PROXIES) {
+            try {
+                const response = await fetch(proxyUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text, source_lang, target_lang })
+                });
+                
+                if (response.status === 429) {
+                    lastError = "Rate Limit 429";
+                    continue;
+                }
+                
+                const textBody = await response.text();
+                let data: any = {};
+                try { data = JSON.parse(textBody); } catch(e) {}
 
-        if (data.code !== 200) {
-            throw Error(`Rate Limit: Failed to translate text from DeepL Proxy: ${data.message || data.error || response.status}`);
+                if (data && data.code === 200 && data.data) {
+                    return { source_lang: data.sourceLang || source_lang, text: data.data };
+                }
+                lastError = `Proxy error (${response.status}): ${textBody.substring(0, 100)}`;
+            } catch (e) {
+                lastError = e?.toString() || "Unknown fetch error";
+            }
         }
-        return { source_lang: data.sourceLang || source_lang, text: data.data }
+        
+        throw Error(`All proxies failed. Last error: ${lastError}`);
     } catch (e) {
         throw Error(`Failed to fetch from DeepL: ${e}`)
     }
