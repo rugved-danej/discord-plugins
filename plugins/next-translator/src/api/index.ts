@@ -3,6 +3,8 @@ import GoogleTranslate from "./GoogleTranslate"
 import MyMemory from "./MyMemory"
 import Bing from "./Bing"
 import { settings } from "../index"
+import { showToast } from "@vendetta/ui/toasts"
+import { getAssetIDByName } from "@vendetta/ui/assets"
 
 const getEngine = (id: number) => {
     switch (id) {
@@ -79,10 +81,6 @@ const translateWithFallback = async (text: string, source_lang: string | undefin
             for (const fallbackId of fallbackChain) {
                 try {
                     console.log(`Engine ${initialEngineId} rate limited. Falling back to engine ${fallbackId}`);
-                    // @ts-ignore
-                    const { showToast } = require("@vendetta/ui/toasts");
-                    // @ts-ignore
-                    const { getAssetIDByName } = require("@vendetta/ui/assets");
                     showToast(`Google Rate Limited. Falling back to MyMemory...`, getAssetIDByName("ic_warning_24px"));
                     
                     const fallbackCacheKey = `${processedText}|${source_lang || 'auto'}|${target_lang}|${fallbackId}`;
