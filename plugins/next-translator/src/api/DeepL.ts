@@ -2,8 +2,9 @@ import { DeepLResponse } from "../type"
 import { settings } from "../index"
 
 const PROXIES = [
-    "https://api.deeplx.org/translate",
+    "http://127.0.0.1:1188/translate",
     "https://deeplx.1stg.me/translate",
+    "https://api.deeplx.org/translate",
     "https://deepl.wuyongx.eu.org/translate",
     "https://api.owo.network/translate"
 ];
@@ -50,6 +51,10 @@ const translate = async (text: string, source_lang: string = "auto", target_lang
                 try { data = JSON.parse(textBody); } catch(e) {}
 
                 if (data && data.code === 200 && data.data) {
+                    if (typeof data.data === "string" && data.data.includes("linux.do")) {
+                        lastError = "Proxy returned linux.do link";
+                        continue;
+                    }
                     return { source_lang: data.sourceLang || source_lang, text: data.data };
                 }
                 lastError = `Proxy error (${response.status}): ${textBody.substring(0, 100)}`;
