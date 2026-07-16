@@ -6,7 +6,7 @@ import { Forms } from "@vendetta/ui/components"
 import { manifest } from "@vendetta/plugin"
 import { useProxy } from "@vendetta/storage"
 
-import { settings } from ".."
+import { storage as settings } from "@vendetta/plugin"
 import IncomingTargetLang from "./IncomingTargetLang"
 import OutgoingTargetLang from "./OutgoingTargetLang"
 import SourceLang from "./SourceLang"

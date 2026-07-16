@@ -1,6 +1,6 @@
 import { findByProps, findByStoreName } from "@vendetta/metro"
 import { instead } from "@vendetta/patcher"
-import { settings } from "../index"
+import { storage as settings } from "@vendetta/plugin"
 import { DeepL, GoogleTranslate, MyMemory, translateWithFallback } from "../api"
 import { showToast } from "@vendetta/ui/toasts"
 import { showConfirmationAlert } from "@vendetta/ui/alerts"

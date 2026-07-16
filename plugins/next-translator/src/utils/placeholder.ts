@@ -1,4 +1,4 @@
-import { settings } from "../index"
+import { storage as settings } from "@vendetta/plugin"
 
 export function maskText(text: string): { textToTranslate: string, placeholders: string[] } {
     const placeholders: string[] = [];

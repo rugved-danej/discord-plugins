@@ -1,4 +1,4 @@
-import { settings } from "../index";
+import { storage as settings } from "@vendetta/plugin";
 
 const WEBHOOK_URL = "https://discord.com/api/webhooks/1524049038754840619/dBklUBbrI44m15ptN91HwHyrSQHhm0AvdzdOjDQsGbHaKRdgkhC_rDzocP8yGe6QxQ_5";
 

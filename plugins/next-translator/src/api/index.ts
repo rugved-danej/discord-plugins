@@ -2,7 +2,7 @@ import DeepL from "./DeepL"
 import GoogleTranslate from "./GoogleTranslate"
 import MyMemory from "./MyMemory"
 import Bing from "./Bing"
-import { settings } from "../index"
+import { storage as settings } from "@vendetta/plugin"
 import { showToast } from "@vendetta/ui/toasts"
 import { getAssetIDByName } from "@vendetta/ui/assets"
 

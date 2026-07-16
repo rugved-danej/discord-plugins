@@ -1,11 +1,11 @@
 import { find, findByProps, findByStoreName } from "@vendetta/metro"
-import { FluxDispatcher, React, ReactNative, i18n, stylesheet, NavigationNative } from "@vendetta/metro/common"
+import { FluxDispatcher, React, ReactNative, stylesheet, NavigationNative } from "@vendetta/metro/common"
 import { before, after } from "@vendetta/patcher"
 import { semanticColors } from "@vendetta/ui"
 import { getAssetIDByName } from "@vendetta/ui/assets"
 import { Forms } from "@vendetta/ui/components"
 import { findInReactTree } from "@vendetta/utils"
-import { settings } from ".."
+import { storage as settings } from "@vendetta/plugin"
 
 import { getLanguageName } from "../lang"
 import { showToast } from "@vendetta/ui/toasts"
@@ -63,7 +63,7 @@ export default () => {
                     if (!buttons) return
                     const hasTranslateButton = buttons.some((x: any) => x?.key === "next-translator-button")
                     if (hasTranslateButton) return;
-                    const position = Math.max(buttons.findIndex((x: any) => x.props.message === i18n.Messages.MARK_UNREAD), 0)
+                    const position = 1;
 
                     const originalMessage = MessageStore.getMessage(
                         message.channel_id,

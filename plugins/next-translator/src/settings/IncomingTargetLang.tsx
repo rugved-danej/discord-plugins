@@ -3,7 +3,7 @@ import { React, ReactNative } from "@vendetta/metro/common"
 import { Forms, Search } from "@vendetta/ui/components"
 import { showToast } from "@vendetta/ui/toasts"
 import { useProxy } from "@vendetta/storage"
-import { settings } from ".."
+import { storage as settings } from "@vendetta/plugin"
 import { GoogleTranslateLangs } from "../lang"
 
 export default () => {

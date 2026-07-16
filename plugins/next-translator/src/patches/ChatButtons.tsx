@@ -4,7 +4,7 @@ import { React, ReactNative, FluxDispatcher } from "@vendetta/metro/common";
 import { showToast } from "@vendetta/ui/toasts";
 import { getAssetIDByName } from "@vendetta/ui/assets";
 import { showConfirmationAlert } from "@vendetta/ui/alerts";
-import { settings } from "../index";
+import { storage as settings } from "@vendetta/plugin";
 import { translateWithFallback } from "../api";
 import { getChannelTargetLanguage } from "../utils/ChannelLanguageStore";
 import { maskText, unmaskText } from "../utils/placeholder";

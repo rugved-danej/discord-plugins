@@ -1,5 +1,5 @@
 import { DeepLResponse } from "../type"
-import { settings } from "../index"
+import { storage as settings } from "@vendetta/plugin"
 
 const PROXIES = [
     "http://127.0.0.1:1188/translate",

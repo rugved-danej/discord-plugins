@@ -1,6 +1,6 @@
 import { before, after } from "@vendetta/patcher"
 import { FluxDispatcher } from "@vendetta/metro/common"
-import { settings } from ".."
+import { storage as settings } from "@vendetta/plugin"
 import { maskText, unmaskText } from "../utils/placeholder"
 import { getLanguageName } from "../lang"
 import { setChannelTargetLanguage } from "../utils/ChannelLanguageStore"

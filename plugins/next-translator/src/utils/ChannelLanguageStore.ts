@@ -1,4 +1,4 @@
-import { settings } from "../index"
+import { storage as settings } from "@vendetta/plugin"
 
 export function setChannelTargetLanguage(channelId: string, langCode: string) {
     if (!langCode || langCode.toLowerCase() === "auto") return;

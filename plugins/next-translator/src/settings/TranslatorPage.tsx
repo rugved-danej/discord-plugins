@@ -4,7 +4,7 @@ import { React, ReactNative, NavigationNative } from "@vendetta/metro/common"
 import { Forms } from "@vendetta/ui/components"
 import { showToast } from "@vendetta/ui/toasts"
 import { useProxy } from "@vendetta/storage"
-import { settings } from ".."
+import { storage as settings } from "@vendetta/plugin"
 
 
 

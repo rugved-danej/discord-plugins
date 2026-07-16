@@ -7,7 +7,7 @@ import patchChatButtons from "./patches/ChatButtons"
 import initAutoTranslate from "./api/AutoTranslate"
 import Settings from "./settings"
 
-export const settings: {
+const settings: {
     source_lang?: string
     target_lang_incoming?: string
     target_lang_outgoing?: string
